@@ -8,6 +8,14 @@ body{
     margin-bottom: 1rem;
 }
 
+.small{
+    font-size: 0.75rem;
+}
+
+.large{
+    font-size: 1.25rem;
+}
+
 .container,
 header,
 section {
