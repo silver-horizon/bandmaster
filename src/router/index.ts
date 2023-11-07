@@ -7,6 +7,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: () => import('../views/HomeView.vue')
+    },
+    {
+      path: '/groups',
+      name: 'groups',
+      component: () => import("../views/group/GroupView.vue")
     }
   ]
 })

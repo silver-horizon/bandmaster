@@ -160,7 +160,7 @@ hr {
     <div class="container navbar">
       <div class="title">
         <h1 class="m-0 inline-block">
-          <RouterLink to="/">Bandmaster</RouterLink>
+          <RouterLink :to="{name: 'home'}">Bandmaster</RouterLink>
         </h1>
         <div id="burger" @click="toggleNav" class="md:hidden">
           <span></span>
@@ -174,7 +174,10 @@ hr {
       <nav class="mt-5">
         <ul class="mb-auto">
           <li>
-            <RouterLink to="/" class="large">Home</RouterLink>
+            <RouterLink :to="{name: 'home'}" class="large">Home</RouterLink>
+          </li>
+          <li>
+          <RouterLink :to="{name: 'groups'}" class="large">Groups</RouterLink>
           </li>
         </ul>
 
