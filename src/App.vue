@@ -174,10 +174,10 @@ hr {
         </div>
         <ul class="mb-auto">
           <li>
-            <RouterLink :to="{name: 'home'}" class="large" @click="toggleNav">Home</RouterLink>
+            <RouterLink :to="{name: 'home'}" class="large" @click="toggleNav(false)">Home</RouterLink>
           </li>
           <li>
-          <RouterLink :to="{name: 'groups'}" class="large" @click="toggleNav">Groups</RouterLink>
+          <RouterLink :to="{name: 'groups'}" class="large" @click="toggleNav(false)">Groups</RouterLink>
           </li>
         </ul>
 
@@ -211,8 +211,17 @@ const group = ref(store.groups[0]);
 
 const isNavOpen = ref(false);
 
-function toggleNav() {
-  isNavOpen.value = !isNavOpen.value;
-  document.body.classList.toggle("nav-open");
+function toggleNav(forceValue: boolean | null = null) {
+  if(forceValue === null){
+    forceValue = !isNavOpen.value;
+  }
+
+  isNavOpen.value = forceValue;
+
+  if(!forceValue){
+    document.body.classList.remove("nav-open");
+  } else {
+    document.body.classList.add("nav-open");
+  }
 }
 </script>
