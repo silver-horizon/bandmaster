@@ -153,6 +153,12 @@ hr {
     transform: translate3d(0, 0, 0);
   }
 }
+
+@media screen and (max-width: 767px){
+  main{
+    margin-top: 75px;
+  }
+}
 </style>
 
 <template>

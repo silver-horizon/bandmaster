@@ -1,3 +1,18 @@
-body.nav-open{
+body.nav-open {
     overflow: hidden;
+}
+
+button {
+    position: static;
+}
+
+.p-float-label {
+    margin-bottom: 2rem;
+}
+
+.p-float-label input:focus~label,
+.p-float-label textarea:focus~label,
+.p-float-label input.p-filled~label,
+.p-float-label textarea.p-filled~label {
+    left: 0;
 }

@@ -16,6 +16,11 @@ main{
     font-size: 1.25rem;
 }
 
+button a{
+  text-decoration: none;
+  color: inherit;
+}
+
 .container,
 header,
 section {
