@@ -21,6 +21,6 @@ const router = createRouter({
       component: () => import("../views/group/AddGroup.vue")
     }
   ]
-})
+});
 
 export default router

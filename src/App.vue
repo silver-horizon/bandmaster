@@ -1,9 +1,11 @@
 <style scoped>
 header {
   background: var(--primary-color);
+  color: var(--primary-color-text);
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 100;
 }
 
 a {
@@ -18,7 +20,7 @@ a {
 .navbar {
   max-height: 63px;
   overflow: hidden;
-  transition: max-height .7s ease-in-out;
+  transition: max-height .5s ease-in-out;
   height: 100vh;
 }
 
@@ -60,32 +62,20 @@ a {
 
 #burger span:nth-child(1) {
   top: 0px;
-  -webkit-transform-origin: left center;
-  -moz-transform-origin: left center;
-  -o-transform-origin: left center;
   transform-origin: left center;
 }
 
 #burger span:nth-child(2) {
   top: calc(var(--height) * 0.4);
-  -webkit-transform-origin: left center;
-  -moz-transform-origin: left center;
-  -o-transform-origin: left center;
   transform-origin: left center;
 }
 
 #burger span:nth-child(3) {
   top: calc(var(--height) * 0.8);
-  -webkit-transform-origin: left center;
-  -moz-transform-origin: left center;
-  -o-transform-origin: left center;
   transform-origin: left center;
 }
 
 .open #burger span:nth-child(1) {
-  -webkit-transform: rotate(45deg);
-  -moz-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
   transform: rotate(45deg);
   top: calc(var(--height) * -0.06666);
   left: calc(var(--width) * 0.133333);
@@ -176,14 +166,18 @@ hr {
       </div>
 
       <hr class="my-3 opacity-40 hidden md:block" />
-
-      <nav class="mt-5">
+      
+      <nav>
+        <div class="p-float-label mb-5">
+        <Dropdown class="w-full" :options="store.groups" option-label="name" v-model="group"></Dropdown>
+        <label>Group</label>
+        </div>
         <ul class="mb-auto">
           <li>
-            <RouterLink :to="{name: 'home'}" class="large">Home</RouterLink>
+            <RouterLink :to="{name: 'home'}" class="large" @click="toggleNav">Home</RouterLink>
           </li>
           <li>
-          <RouterLink :to="{name: 'groups'}" class="large">Groups</RouterLink>
+          <RouterLink :to="{name: 'groups'}" class="large" @click="toggleNav">Groups</RouterLink>
           </li>
         </ul>
 
@@ -207,6 +201,13 @@ hr {
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
 import { ref } from 'vue';
+import {useMockStore} from './stores/MockDataStore';
+
+import Dropdown from 'primevue/dropdown';
+
+const store = useMockStore();
+
+const group = ref(store.groups[0]);
 
 const isNavOpen = ref(false);
 

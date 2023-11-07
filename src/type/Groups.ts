@@ -3,6 +3,7 @@ export interface ISection {
 }
 
 export interface IGroup {
+    id: string,
     name: string,
     sections: ISection[]
 };

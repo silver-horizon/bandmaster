@@ -8,7 +8,7 @@
                 <label for="group-name">Group Name</label>
             </span>
 
-            <span class="p-float-label">
+            <span class="p-float-label mb-3">
                 <Textarea class="w-full" id="sections" auto-resize v-model="rawSections" required></Textarea>
                 <label for="sections">Sections (one per row)</label>
             </span>
@@ -52,6 +52,7 @@ async function create() {
 
     const sections = rawSections.value.split("\n");
     store.groups.push({
+        id: name.value,
         name: name.value,
         sections: sections.map(v => ({
             name: v

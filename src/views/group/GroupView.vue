@@ -2,28 +2,32 @@
     <h2>Your Groups</h2>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
-        <div v-if="groups == null">
-        <Card class="h-full">
-            <template #content>
-                <Skeleton></Skeleton>
-            </template>
-        </Card>
+        <div v-if="groups == null" class="mb-3">
+            <Card class="h-full">
+                <template #content>
+                    <Skeleton class="mb-3"></Skeleton>
+                    <Skeleton width="10rem" height="4rem" borderRadius="16px"></Skeleton>
+                </template>
+            </Card>
         </div>
 
-        <div v-for="group in groups" class="hover">
-        <Card class="text-center h-full">
-            <template #content>
-                <h3>{{ group.name }}</h3>
-            </template>
-        </Card>
+        <div v-for="group in groups" class="mb-3 hover">
+            <Card class="text-center h-full">
+                <template #content>
+                    <p class="text-lg">{{ group.name }}</p>
+                    <Button class="stretched-link">Select</Button>
+                </template>
+            </Card>
         </div>
 
-        <div class="hover">
-        <Card class="text-center h-full">
-            <template #content>
-                <Button><RouterLink :to="{name: 'addGroup'}" class="stretched-link">Add New Group</RouterLink></Button>
-            </template>
-        </Card>
+        <div class="mb-3 hover">
+            <Card class="text-center h-full">
+                <template #content>
+                    <Button>
+                        <RouterLink :to="{ name: 'addGroup' }" class="stretched-link">Add New Group</RouterLink>
+                    </Button>
+                </template>
+            </Card>
         </div>
     </div>
 </template>
