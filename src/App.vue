@@ -144,8 +144,8 @@ hr {
   }
 }
 
-@media screen and (max-width: 767px){
-  main{
+@media screen and (max-width: 767px) {
+  main {
     margin-top: 75px;
   }
 }
@@ -156,7 +156,7 @@ hr {
     <div class="container navbar">
       <div class="title">
         <h1 class="m-0 inline-block">
-          <RouterLink :to="{name: 'home'}">Bandmaster</RouterLink>
+          <RouterLink :to="{ name: 'home' }">Bandmaster</RouterLink>
         </h1>
         <div id="burger" @click="toggleNav()" class="md:hidden">
           <span></span>
@@ -166,18 +166,15 @@ hr {
       </div>
 
       <hr class="my-3 opacity-40 hidden md:block" />
-      
+
       <nav>
         <div class="p-float-label mb-5">
-        <Dropdown class="w-full" :options="store.groups" option-label="name" v-model="store.currentGroup" :loading="loadingGroups" :disabled="loadingGroups"></Dropdown>
-        <label>Group</label>
+          <Dropdown class="w-full" :options="availableGroups" option-label="name" v-model="store.currentGroup" :loading="loadingGroups" :disabled="loadingGroups" @change="changeGroup" @focus="prevSelection = store.currentGroup"></Dropdown>
+          <label>Group</label>
         </div>
         <ul class="mb-auto">
           <li>
-            <RouterLink :to="{name: 'home'}" class="large" @click="toggleNav(false)">Home</RouterLink>
-          </li>
-          <li>
-          <RouterLink :to="{name: 'groups'}" class="large" @click="toggleNav(false)">Groups</RouterLink>
+            <RouterLink :to="{ name: 'home' }" class="large" @click="toggleNav(false)">Home</RouterLink>
           </li>
         </ul>
 
@@ -199,19 +196,29 @@ hr {
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router';
-import { ref } from 'vue';
-import {useSessionStore} from './stores/SessionStore';
+import type { IGroup } from './type/Groups';
+
+import { RouterLink, RouterView, useRouter } from 'vue-router';
+import { ref, computed } from 'vue';
+import { useSessionStore } from './stores/SessionStore';
 import GroupService from './service/GroupService';
 
 import Dropdown from 'primevue/dropdown';
 
+const router = useRouter();
 const store = useSessionStore();
 const loadingGroups = ref(true);
+let prevSelection: null | IGroup = null;
+
+const availableGroups = computed(() => store.groups.concat([{
+  id: "ADD",
+  name: "+ Add",
+  sections: []
+}]));
 
 GroupService.getGroups().then(g => {
   store.groups = g;
-  if(!store.currentGroup){
+  if (!store.currentGroup) {
     store.currentGroup = g[0];
   }
 
@@ -221,16 +228,26 @@ GroupService.getGroups().then(g => {
 const isNavOpen = ref(false);
 
 function toggleNav(forceValue: boolean | null = null) {
-  if(forceValue === null){
+  if (forceValue === null) {
     forceValue = !isNavOpen.value;
   }
 
   isNavOpen.value = forceValue;
 
-  if(!forceValue){
+  if (!forceValue) {
     document.body.classList.remove("nav-open");
   } else {
     document.body.classList.add("nav-open");
   }
+}
+
+function changeGroup() {
+  if (store.currentGroup?.id !== "ADD") {
+    return;
+  }
+
+  store.currentGroup = prevSelection;
+  router.push({ name: "addGroup" });
+  toggleNav(false);
 }
 </script>
