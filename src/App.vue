@@ -174,7 +174,7 @@ hr {
         </div>
         <ul class="mb-auto">
           <li>
-            <RouterLink :to="{ name: 'home' }" class="large" @click="toggleNav(false)">Home</RouterLink>
+            <RouterLink :to="{ name: 'memberList' }" class="large" @click="toggleNav(false)">Members</RouterLink>
           </li>
         </ul>
 

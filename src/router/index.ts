@@ -13,7 +13,13 @@ const router = createRouter({
     {
       path: '/groups/add',
       name: 'addGroup',
-      component: () => import("../views/group/AddGroup.vue")
+      component: () => import("../views/AddGroup.vue")
+    },
+
+    {
+      path: '/members',
+      name: 'memberList',
+      component: () => import("../views/MemberList.vue")
     }
   ]
 });

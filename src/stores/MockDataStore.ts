@@ -9,9 +9,11 @@ export const useMockStore = defineStore('mock', () => {
     id: "revolution",
     name: "Revolution",
     sections: [{
-      name: "Brass"
+      name: "Brass",
+      members: []
     }, {
-      name: "Drums"
+      name: "Drums",
+      members: []
     }]
   }]);
 

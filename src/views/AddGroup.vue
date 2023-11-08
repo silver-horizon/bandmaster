@@ -32,7 +32,7 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import { useMockStore } from '../../stores/MockDataStore';
+import { useMockStore } from '../stores/MockDataStore';
 const store = useMockStore();
 
 const name = ref("");
@@ -55,7 +55,8 @@ async function create() {
         id: name.value,
         name: name.value,
         sections: sections.map(v => ({
-            name: v
+            name: v,
+            members: []
         }))
     });
 
