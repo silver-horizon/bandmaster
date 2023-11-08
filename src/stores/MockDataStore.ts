@@ -13,7 +13,10 @@ export const useMockStore = defineStore('mock', () => {
       members: []
     }, {
       name: "Drums",
-      members: []
+      members: [{
+        name: "Luke Taylor",
+        sectionName: "Drums" //ignore this duplication, it won't be a problem when it comes from the server
+      }]
     }]
   }]);
 

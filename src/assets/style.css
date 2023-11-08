@@ -32,3 +32,14 @@ button {
     align-items: center;
     justify-content: center;
 }
+
+/* using fieldsets for info */
+.p-fieldset{
+    background-color: var(--cyan-200);
+    border-color: var(--cyan-200);
+}
+
+.p-fieldset .p-fieldset-legend{
+    background-color: var(--cyan-100);
+    border-color: var(--cyan-100);
+}

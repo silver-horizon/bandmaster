@@ -1,5 +1,6 @@
 export interface IMember {
-    name: string
+    name: string,
+    sectionName: string
 }
 
 export interface ISection {
