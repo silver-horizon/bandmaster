@@ -5,7 +5,7 @@
                 <slot></slot>
 
                 <div class="text-center mt-3">
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">{{buttonTitle}}</Button>
                 </div>
             </template>
         </Card>
@@ -15,6 +15,11 @@
 <script setup lang="ts">
 import Card from 'primevue/card';
 import Button from 'primevue/button';
+
+const props = defineProps<{
+    buttonTitle?: string
+}>();
+const buttonTitle = props.buttonTitle ?? "Submit";
 
 const emit = defineEmits(['submit']);
 

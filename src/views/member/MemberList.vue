@@ -2,7 +2,7 @@
     <h2>Members</h2>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
-        <div v-if="members == null">
+        <div v-if="members == null" class="mb-3">
             <Card class="h-full">
                 <template #content>
                     <Skeleton class="mb-3"></Skeleton>
@@ -11,7 +11,7 @@
             </Card>
         </div>
 
-        <div v-for="member in members" class="hover">
+        <div v-for="member in members" class="hover mb-3">
             <Card class="h-full text-center">
                 <template #content>
                     <p>{{ member.name }}</p>
@@ -23,11 +23,11 @@
             </Card>
         </div>
 
-        <div class="hover">
+        <div class="hover mb-3">
             <Card class="h-full">
                 <template #content>
                     <Button size="large">
-                        <RouterLink class="stretched-link" :to="{ name: 'createMember'}">Add</RouterLink>
+                        <RouterLink class="stretched-link" :to="{ name: 'createMember'}">+ Add</RouterLink>
                     </Button>
                 </template>
             </Card>
@@ -59,6 +59,7 @@ function updateMembers() {
         return;
     }
 
+    members.value = null;
     GroupService.getMembersInGroup(store.currentGroup.id).then(m => members.value = m);
 }
 

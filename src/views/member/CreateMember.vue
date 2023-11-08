@@ -4,7 +4,7 @@
         <p>You are adding this member to the <strong>{{ store.currentGroup?.name }}</strong> group</p>
     </Fieldset>
 
-    <Form @submit="createMember">
+    <Form @submit="createMember" button-title="Create">
         <div class="row">
             <div class="col-12 col-lg-6">
                 <div class="p-float-label">
@@ -49,14 +49,14 @@ const lname = ref("");
 const email = ref("");
 
 async function createMember(){
-    mockStore.groups.find(x => x.id == store.currentGroup.id)?.sections[0].members.push({
+    mockStore.groups.find(x => x.id == store.currentGroup?.id)?.sections[0].members.push({
         name: `${fname.value} ${lname.value}`,
         sectionName: email.value
     });
 
     await Swal.fire({
        title: "Created Member",
-       text: `Member ${fname.value} ${lname.value} has been successfully added to group ${store.currentGroup.name}`,
+       text: `Member ${fname.value} ${lname.value} has been successfully added to group ${store.currentGroup?.name}`,
        icon: "success" 
     });
 
