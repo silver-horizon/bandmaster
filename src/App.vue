@@ -158,7 +158,7 @@ hr {
         <h1 class="m-0 inline-block">
           <RouterLink :to="{name: 'home'}">Bandmaster</RouterLink>
         </h1>
-        <div id="burger" @click="toggleNav" class="md:hidden">
+        <div id="burger" @click="toggleNav()" class="md:hidden">
           <span></span>
           <span></span>
           <span></span>
@@ -169,7 +169,7 @@ hr {
       
       <nav>
         <div class="p-float-label mb-5">
-        <Dropdown class="w-full" :options="store.groups" option-label="name" v-model="group"></Dropdown>
+        <Dropdown class="w-full" :options="store.groups" option-label="name" v-model="store.currentGroup" :loading="loadingGroups" :disabled="loadingGroups"></Dropdown>
         <label>Group</label>
         </div>
         <ul class="mb-auto">
@@ -201,13 +201,22 @@ hr {
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
 import { ref } from 'vue';
-import {useMockStore} from './stores/MockDataStore';
+import {useSessionStore} from './stores/SessionStore';
+import GroupService from './service/GroupService';
 
 import Dropdown from 'primevue/dropdown';
 
-const store = useMockStore();
+const store = useSessionStore();
+const loadingGroups = ref(true);
 
-const group = ref(store.groups[0]);
+GroupService.getGroups().then(g => {
+  store.groups = g;
+  if(!store.currentGroup){
+    store.currentGroup = g[0];
+  }
+
+  loadingGroups.value = false;
+});
 
 const isNavOpen = ref(false);
 

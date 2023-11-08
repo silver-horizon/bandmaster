@@ -15,7 +15,7 @@
             <Card class="text-center h-full">
                 <template #content>
                     <p class="text-lg">{{ group.name }}</p>
-                    <Button class="stretched-link">Select</Button>
+                    <Button class="stretched-link" @click="setGroup(group)">Select</Button>
                 </template>
             </Card>
         </div>
@@ -38,6 +38,7 @@ import type { Ref } from "vue";
 
 import { ref } from 'vue';
 import GroupService from "../../service/GroupService";
+import { useSessionStore } from "../../stores/SessionStore";
 
 import Skeleton from "primevue/skeleton";
 import Card from "primevue/card";
@@ -46,4 +47,9 @@ import { RouterLink } from "vue-router";
 
 const groups: Ref<IGroup[] | null> = ref(null);
 GroupService.getGroups().then((g: IGroup[]) => groups.value = g);
+
+function setGroup(group: IGroup){
+    const store = useSessionStore();
+    store.currentGroup = group;
+}
 </script>
