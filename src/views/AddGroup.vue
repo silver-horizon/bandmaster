@@ -29,25 +29,17 @@ import { useMockStore } from '../stores/MockDataStore';
 const mockStore = useMockStore();
 
 import { useSessionStore } from '@/stores/SessionStore';
+import GroupService from '@/service/GroupService';
 const store = useSessionStore();
 
 const name = ref("");
 const rawSections = ref("");
 
 async function create() {
-    const sections = rawSections.value.split("\n");
+    const group = await GroupService.createGroup(name.value, rawSections.value);
 
-    const newGroup = {
-        id: name.value,
-        name: name.value,
-        sections: sections.map(v => ({
-            name: v,
-            members: []
-        }))
-    };
-
-    mockStore.groups.push(newGroup);
-    store.currentGroup = newGroup;
+    store.currentGroup = group;
+    store.groups.push(group);
 
     await Swal.fire({
         title: 'Group Added Successfully',

@@ -210,11 +210,13 @@ const store = useSessionStore();
 const loadingGroups = ref(true);
 let prevSelection: null | IGroup = null;
 
-const availableGroups = computed(() => store.groups.concat([{
+const availableGroups = computed(() => {
+  return store.groups.concat([{
   id: "ADD",
   name: "+ Add",
   sections: []
-}]));
+}])
+});
 
 GroupService.getGroups().then(g => {
   store.groups = g;
