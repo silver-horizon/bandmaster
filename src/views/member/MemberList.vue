@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import type { Ref } from 'vue';
-import type { IMember } from '@/type/Groups';
+import type { IMember } from '../../../../bandmaster-common/type/Groups';
 
 import { ref } from 'vue';
 import GroupService from '@/service/GroupService';

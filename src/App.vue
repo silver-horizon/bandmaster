@@ -196,7 +196,7 @@ hr {
 </template>
 
 <script setup lang="ts">
-import type { IGroup } from './type/Groups';
+import type { IGroup } from '../../bandmaster-common/type/Groups';
 
 import { RouterLink, RouterView, useRouter } from 'vue-router';
 import { ref, computed } from 'vue';

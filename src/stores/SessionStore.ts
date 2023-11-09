@@ -1,4 +1,4 @@
-import type { IGroup } from '../type/Groups';
+import type { IGroup } from '../../../bandmaster-common/type/Groups';
 import type { Ref } from 'vue';
 import {ref} from 'vue'
 
