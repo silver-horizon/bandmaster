@@ -212,10 +212,10 @@ let prevSelection: null | IGroup = null;
 
 const availableGroups = computed(() => {
   return store.groups.concat([{
-  id: "ADD",
-  name: "+ Add",
-  sections: []
-}])
+    id: "ADD",
+    name: "+ Add",
+    sections: []
+  }])
 });
 
 GroupService.getGroups().then(g => {

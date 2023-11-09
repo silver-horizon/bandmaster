@@ -1,4 +1,4 @@
-import type { IGroup, IMember, ISection } from "../../../bandmaster-common/type/Groups";
+import type { IGroup, IMember } from "../../../bandmaster-common/type/Groups";
 
 import { useMockStore } from "../stores/MockDataStore";
 

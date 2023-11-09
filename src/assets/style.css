@@ -43,3 +43,7 @@ button {
     background-color: var(--cyan-100);
     border-color: var(--cyan-100);
 }
+
+.p-input-icon-left, .p-input-icon-right{
+    display: block;
+}

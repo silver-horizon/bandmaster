@@ -1,3 +1,4 @@
+import 'primeicons/primeicons.css';
 import 'primevue/resources/themes/lara-light-purple/theme.css';
 import 'primeflex/primeflex.css';
 import './assets/core.css';

@@ -4,8 +4,8 @@
             <template #content>
                 <slot></slot>
 
-                <div class="text-center mt-3">
-                    <Button type="submit">{{buttonTitle}}</Button>
+                <div class="text-center mt-3" v-if="!disabled">
+                    <Button type="submit">{{buttonText}}</Button>
                 </div>
             </template>
         </Card>
@@ -16,10 +16,11 @@
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 
-const props = defineProps<{
-    buttonTitle?: string
+const {buttonTitle, disabled} = defineProps<{
+    buttonTitle?: string,
+    disabled?: boolean
 }>();
-const buttonTitle = props.buttonTitle ?? "Submit";
+const buttonText = buttonTitle ?? "Submit";
 
 const emit = defineEmits(['submit']);
 
