@@ -8,10 +8,13 @@
                     <strong>{{ section.name }} <Badge :value="section.members.length"></Badge></strong>
                 </template>
 
-                <draggable v-model="section.members" item-key="id" group="sections" @change="changeSection($event, section.id)">
-                    <template #item="{element}">
+                <draggable v-model="section.members" item-key="id" group="sections" @change="changeSection($event, section.id)" handle=".handle">
+                    <template #item="{element: member}">
                         <Card class="list-item">
-                            <template #content>{{ element.firstName }} {{ element.lastName }}</template>
+                            <template #content>
+                                <i class="pi pi-bars mr-3 handle"></i>
+                                <RouterLink :to="{name: 'viewMember', params: {id: member.id}}">{{ member.firstName }} {{ member.lastName }}</RouterLink>
+                            </template>
                         </Card>
                     </template>
                 </draggable>
@@ -27,6 +30,7 @@ import { useSessionStore } from '@/stores/SessionStore';
 import Panel from 'primevue/panel';
 import Card from 'primevue/card';
 import Badge from 'primevue/badge';
+import { RouterLink } from 'vue-router';
 
 import draggable from 'vuedraggable';
 

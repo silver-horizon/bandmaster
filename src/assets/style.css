@@ -48,3 +48,7 @@ button {
 .p-card.list-item .p-card-body{
     padding: 0 1.25rem;
 }
+
+.handle{
+    cursor: pointer;
+}
