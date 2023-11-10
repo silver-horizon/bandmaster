@@ -41,5 +41,18 @@ export default {
             })
         }).then(res => res.json());
         return result;
+    },
+
+    async moveMemberToSection(groupId: string, userId: string, newSectionId: string){
+        const result = await fetch(getApiUrl(`/${groupId}/members/${userId}/section`), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: newSectionId
+            })
+        }).then(res => res.json());
+        return result;
     }
 };
