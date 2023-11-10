@@ -27,10 +27,6 @@ export default {
         return result;
     },
 
-    async getMembersInGroup(id: string): Promise<IMember[]>{
-        return [];
-    },
-
     async addMemberToGroup(groupId: string, email: string, firstName: string, lastName: string, sectionId: string){
         const result = await fetch(getApiUrl(`/${groupId}/members/add`), {
             method: 'POST',

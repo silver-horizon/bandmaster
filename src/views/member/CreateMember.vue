@@ -1,8 +1,7 @@
 <template>
     <h2>Add Member</h2>
-    <Fieldset legend="Note" v-if="store.groups.length > 1">
-        <p>You are adding this member to the <strong>{{ store.currentGroup?.name }}</strong> group</p>
-    </Fieldset>
+    <Message severity="info" v-if="store.groups.length > 1">You are adding this member to <strong>{{ store.currentGroup?.name }}</strong></Message>
+    <Message severity="error" :closable="false" v-if="alreadyExists">This member already exists within {{ store.currentGroup?.name }}!</Message>
 
     <Form @submit="createMember" button-title="Create" :disabled="!canSubmit">
         <div class="p-float-label" :class="{'p-input-icon-right': loading}">
@@ -50,7 +49,7 @@ import { ref } from 'vue';
 import Swal from 'sweetalert2';
 
 import Form from '@/components/Form.vue';
-import Fieldset from 'primevue/fieldset';
+import Message from 'primevue/message';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 
@@ -65,6 +64,7 @@ const canSubmit = ref(false);
 const newMember: Ref<boolean | null> = ref(null);
 const loading = ref(false);
 const needsSection = ref(false);
+const alreadyExists = ref(false);
 
 const checkEmail = debounce((e: Event) => {
     newMember.value = null;
@@ -76,6 +76,15 @@ const checkEmail = debounce((e: Event) => {
 
     target.classList.remove("p-invalid");
     loading.value = true;
+
+    const match = store.currentGroup?.sections.flatMap(s => s.members).find(m => m.email == email.value);
+    if(match){
+        loading.value = false;
+        alreadyExists.value = true;
+        return;
+    }
+
+    alreadyExists.value = false;
 
     UserService.findByEmail(email.value).then(res => {
         loading.value = false;
@@ -90,7 +99,7 @@ const checkEmail = debounce((e: Event) => {
 
         canSubmit.value = true;
     });
-}, 1000);
+}, 700);
 
 async function createMember(){
     if(!store.currentGroup){
