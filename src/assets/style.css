@@ -33,17 +33,18 @@ button {
     justify-content: center;
 }
 
-/* using fieldsets for info */
-.p-fieldset{
-    background-color: var(--cyan-200);
-    border-color: var(--cyan-200);
-}
-
-.p-fieldset .p-fieldset-legend{
-    background-color: var(--cyan-100);
-    border-color: var(--cyan-100);
-}
-
 .p-input-icon-left, .p-input-icon-right{
     display: block;
+}
+
+.p-card.list-item{
+    border-radius: 0;
+}
+
+.p-card.list-item:not(:last-child){
+    border-bottom: solid 1px rgba(0,0,0,0.2);
+}
+
+.p-card.list-item .p-card-body{
+    padding: 0 1.25rem;
 }

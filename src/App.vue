@@ -176,6 +176,9 @@ hr {
           <li>
             <RouterLink :to="{ name: 'memberList' }" class="large" @click="toggleNav(false)">Members</RouterLink>
           </li>
+          <li>
+            <RouterLink :to="{ name: 'listSections' }" class="large" @click="toggleNav(false)">Sections</RouterLink>
+          </li>
         </ul>
 
         <hr class="my-3 opacity-40 hidden md:block" />

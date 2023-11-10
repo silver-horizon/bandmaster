@@ -30,6 +30,12 @@ const router = createRouter({
       path: '/members/:id',
       name: 'viewMember',
       component: () => import("@/views/HomeView.vue")
+    },
+
+    {
+      path: '/sections',
+      name: 'listSections',
+      component: () => import("@/views/ViewSections.vue")
     }
   ]
 });
