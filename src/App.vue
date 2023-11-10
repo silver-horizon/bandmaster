@@ -169,7 +169,7 @@ hr {
 
       <nav>
         <div class="p-float-label mb-5">
-          <Dropdown class="w-full" :options="availableGroups" option-label="name" v-model="store.currentGroup" :loading="loadingGroups" :disabled="loadingGroups" @change="changeGroup" @focus="prevSelection = store.currentGroup"></Dropdown>
+          <Dropdown class="w-full" :options="availableGroups" option-label="name" option-value="id" v-model="id" :loading="loadingGroups" :disabled="loadingGroups" @change="changeGroup"></Dropdown>
           <label>Group</label>
         </div>
         <ul class="mb-auto">
@@ -196,10 +196,8 @@ hr {
 </template>
 
 <script setup lang="ts">
-import type { IGroup } from '../../bandmaster-common/type/Groups';
-
 import { RouterLink, RouterView, useRouter } from 'vue-router';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useSessionStore } from './stores/SessionStore';
 import GroupService from './service/GroupService';
 
@@ -208,7 +206,7 @@ import Dropdown from 'primevue/dropdown';
 const router = useRouter();
 const store = useSessionStore();
 const loadingGroups = ref(true);
-let prevSelection: null | IGroup = null;
+const id = ref(store.currentGroup?.id);
 
 const availableGroups = computed(() => {
   return store.groups.concat([{
@@ -222,6 +220,7 @@ GroupService.getGroups().then(g => {
   store.groups = g;
   if (!store.currentGroup) {
     store.currentGroup = g[0];
+    id.value = g[0].id;
   }
 
   loadingGroups.value = false;
@@ -244,11 +243,14 @@ function toggleNav(forceValue: boolean | null = null) {
 }
 
 function changeGroup() {
-  if (store.currentGroup?.id !== "ADD") {
+  if (id.value !== "ADD") {
+    const match = store.groups.find(x => x.id === id.value);
+    if(match){
+      store.currentGroup = match;
+    }
     return;
   }
 
-  store.currentGroup = prevSelection;
   router.push({ name: "addGroup" });
   toggleNav(false);
 }

@@ -6,13 +6,8 @@
     <Form @submit="createMember" button-title="Create" :disabled="!canSubmit">
         <div class="p-float-label" :class="{'p-input-icon-right': loading}">
             <i class="pi pi-spin pi-spinner" v-if="loading"></i>
-            <InputText type="email" class="w-full" id="email" required v-model="email" :disabled="loading" @keydown="checkEmail"></InputText>
+            <InputText type="email" class="w-full" id="email" required v-model="email" @keydown="checkEmail"></InputText>
             <label for="email">Email</label>
-        </div>
-
-        <div class="p-float-label mb-3">
-            <Dropdown class="w-full" :options="store.currentGroup?.sections" option-label="name" v-model="section" :class="{'p-invalid': needsSection}"></Dropdown>
-            <label>Section</label>
         </div>
 
         <div class="row" v-if="newMember != null">
@@ -29,6 +24,11 @@
                     <label for="last-name">Last Name</label>
                 </div>
             </div>
+        </div>
+
+        <div class="p-float-label mb-3">
+            <Dropdown class="w-full" :options="store.currentGroup?.sections" option-label="name" v-model="section" :class="{'p-invalid': needsSection}"></Dropdown>
+            <label>Section</label>
         </div>
 
     </Form>

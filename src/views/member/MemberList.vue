@@ -41,10 +41,11 @@ const members = computed(() => store.currentGroup?.sections.flatMap(s => s.membe
 }))));
 
 const store = useSessionStore();
-const prevGroup = store.currentGroup?.id;
+let prevGroup = store.currentGroup?.id;
 store.$subscribe(() => {
     if(store.currentGroup?.id != prevGroup){
         updateMembers();
+        prevGroup = store.currentGroup?.id;
     }
 });
 
