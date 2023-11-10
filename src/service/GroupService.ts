@@ -1,12 +1,5 @@
 import type { IGroup, IMember } from "../../../bandmaster-common/type/Groups";
 
-import { useMockStore } from "../stores/MockDataStore";
-
-const _findGroup = (id: string): IGroup | null => {
-    const store = useMockStore();
-    return store.groups.find(x => x.id === id) ?? null;
-}
-
 const getApiUrl = (endpoint: string = '') => `${import.meta.env.VITE_API_URL}/groups${endpoint}`;
 
 export default {
@@ -36,5 +29,21 @@ export default {
 
     async getMembersInGroup(id: string): Promise<IMember[]>{
         return [];
+    },
+
+    async addMemberToGroup(groupId: string, email: string, firstName: string, lastName: string, sectionId: string){
+        const result = await fetch(getApiUrl(`/${groupId}/members/add`), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                firstName,
+                lastName,
+                email,
+                sectionId
+            })
+        }).then(res => res.json());
+        return result;
     }
 };
