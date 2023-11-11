@@ -10,3 +10,9 @@ export function debounce(fn: (...args: any[]) => void, wait: number) {
         }, wait);
     }
 }
+
+export function dateToString(date: Date){
+    const offset = date.getTimezoneOffset() * 60 * 1000;
+    const adjustedDate = new Date(date.getTime() - offset);
+    return adjustedDate.toISOString().split('T')[0];
+}

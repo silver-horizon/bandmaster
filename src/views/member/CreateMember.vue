@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="p-float-label mb-3">
-                        <InputText type="email" class="w-full" id="cemail" v-model="user.contact.email"></InputText>
+                        <InputText type="email" class="w-full" id="cemail" v-model="user.contact.email" required></InputText>
                         <label for="cemail">Email</label>
                     </div>
 
@@ -194,8 +194,13 @@ async function createMember() {
     showError.value.section = false;
     showError.value.dob = false;
 
-    const { fname, lname, email, dob } = user.value;
-    const res = await GroupService.addMemberToGroup(store.currentGroup.id, email, fname, lname, dob, section.value.id);
+    if(age.value >= 18){
+        user.value.contact = null;
+    }
+
+    const { fname, lname, email, dob, contact } = user.value;
+    const res = await GroupService.addMemberToGroup(store.currentGroup.id, email, fname, lname, dob, section.value.id, 
+        contact?.fname, contact?.lname, contact?.email, contact?.phone);
 
     if (res.success === false) {
         await Swal.fire({
