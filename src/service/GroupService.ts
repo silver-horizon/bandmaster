@@ -27,7 +27,7 @@ export default {
         return result;
     },
 
-    async addMemberToGroup(groupId: string, email: string, firstName: string, lastName: string, sectionId: string){
+    async addMemberToGroup(groupId: string, email: string, firstName: string, lastName: string, dob: Date, sectionId: string){
         const result = await fetch(getApiUrl(`/${groupId}/members/add`), {
             method: 'POST',
             headers: {
