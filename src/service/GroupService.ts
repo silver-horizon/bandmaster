@@ -67,5 +67,13 @@ export default {
                 id: newSectionId
             })
         });
+    },
+
+    async getUserInGroupById(groupId: string, userId: string){
+        const result = await fetch(getApiUrl(`/${groupId}/members/${userId}`)).then(res => res.json());
+        if(result){
+            result.dob = new Date(result.dob);
+        }
+        return result;
     }
 };

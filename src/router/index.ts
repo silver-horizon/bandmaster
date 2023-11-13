@@ -16,6 +16,7 @@ const router = createRouter({
       component: () => import("@/views/AddGroup.vue")
     },
 
+    //member
     {
       path: '/members',
       name: 'memberList',
@@ -29,9 +30,10 @@ const router = createRouter({
     {
       path: '/members/:id',
       name: 'viewMember',
-      component: () => import("@/views/HomeView.vue")
+      component: () => import("@/views/member/ViewMember.vue")
     },
 
+    //section
     {
       path: '/sections',
       name: 'listSections',
