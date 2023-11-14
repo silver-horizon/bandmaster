@@ -1,6 +1,6 @@
 <template>
     <form :id="id" @submit.prevent="handleSubmit">
-        <Card>
+        <Card :unstyled="unstyled">
             <template #content>
                 <slot></slot>
 
@@ -16,9 +16,10 @@
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 
-const {buttonTitle, disabled} = defineProps<{
+const {buttonTitle, disabled, unstyled} = defineProps<{
     buttonTitle?: string,
-    disabled?: boolean
+    disabled?: boolean,
+    unstyled?: boolean
 }>();
 const buttonText = buttonTitle ?? "Submit";
 

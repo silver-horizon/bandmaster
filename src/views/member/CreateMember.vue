@@ -39,31 +39,7 @@
                 <div class="mt-5" v-if="user.contact && age < 18">
                     <hr />
                     <h3>Emergency Contact Details</h3>
-                    <div class="row">
-                        <div class="col-12 col-lg-6">
-                            <div class="p-float-label">
-                                <InputText class="w-full" id="fcirst-name" required v-model="user.contact.fname"></InputText>
-                                <label for="cfirst-name">First Name</label>
-                            </div>
-                        </div>
-
-                        <div class="col-12 col-lg-6">
-                            <div class="p-float-label">
-                                <InputText class="w-full" id="clast-name" required v-model="user.contact.lname"></InputText>
-                                <label for="clast-name">Last Name</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-float-label mb-3">
-                        <InputText type="email" class="w-full" id="cemail" v-model="user.contact.email" required></InputText>
-                        <label for="cemail">Email</label>
-                    </div>
-
-                    <div class="p-float-label mb-3">
-                        <InputText class="w-full" id="phone" v-model="user.contact.phone" maxlength="15" required></InputText>
-                        <label for="phone">Phone</label>
-                    </div>
+                    <CreateEmergencyContact v-model="user.contact"></CreateEmergencyContact>
                 </div>
 
             </template>
@@ -80,6 +56,7 @@
 <script setup lang="ts">
 import type { ISection } from '../../../../bandmaster-common/type/Groups';
 import type { Ref } from 'vue';
+import type { IEmergencyContact } from '../../../../bandmaster-common/type/Users';
 
 import { useSessionStore } from '@/stores/SessionStore';
 import { useRouter } from 'vue-router';
@@ -97,23 +74,18 @@ import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
 import Card from 'primevue/card';
+import CreateEmergencyContact from "@/components/popup/CreateEmergencyContact.vue";
 
 const store = useSessionStore();
 const router = useRouter();
 
-interface IContactDetails {
-    fname: string,
-    lname: string,
-    email: string,
-    phone: string
-}
 
 interface IUserDetails{
     fname: string,
     lname: string,
     email: string,
     dob: Date | null,
-    contact: IContactDetails | null
+    contact: IEmergencyContact | null
 }
 
 const user: Ref<IUserDetails> = ref({
@@ -122,8 +94,8 @@ const user: Ref<IUserDetails> = ref({
     email: "",
     dob: null,
     contact: {
-        fname: "",
-        lname: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phone: ""
     }
@@ -200,7 +172,7 @@ async function createMember() {
 
     const { fname, lname, email, dob, contact } = user.value;
     const res = await GroupService.addMemberToGroup(store.currentGroup.id, email, fname, lname, dob, section.value.id, 
-        contact?.fname, contact?.lname, contact?.email, contact?.phone);
+        contact?.firstName, contact?.lastName, contact?.email, contact?.phone);
 
     if (res.success === false) {
         await Swal.fire({
