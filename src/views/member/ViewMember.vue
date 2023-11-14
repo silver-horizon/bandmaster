@@ -155,7 +155,6 @@ GroupService.getUserInGroupById(store.currentGroup?.id ?? '', route.params.id as
     user.value = m;
     age.value = getAge(user.value.dob);
     isUser.value = m.userId === store.currentUser.id;
-    console.log(store.currentUser.id);
     numCols.value = age.value < 18 ? 2 : 1;
 });
 

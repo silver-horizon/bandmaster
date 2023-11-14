@@ -1,24 +1,22 @@
+import { getFromApi, postToApi } from "@/utils";
+
 const getApiUrl = (endpoint: string = '') => `${import.meta.env.VITE_API_URL}/users${endpoint}`;
 
 export default {
     async findByEmail(email: string){
-        const result = await fetch(getApiUrl(`/email/${email}`)).then(res => res.json());
-        return result;
+        return await getFromApi(getApiUrl(`/email/${email}`))
     },
 
     async getById(id: string){
-        const result = await fetch(getApiUrl(`/${id}`)).then(res => res.json());
-        return result;
+        return await getFromApi(getApiUrl(`/${id}`));
     },
 
     async setContact(id: string, firstName: string, lastName: string, email: string, phone: string){
-        const result = await fetch(getApiUrl(`/${id}/emergency-contact`), {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({firstName, lastName, email, phone})
-        }).then(res => res.json());
-        return result;
+        return await postToApi(getApiUrl(`/${id}/emergency-contact`), {
+            firstName, 
+            lastName, 
+            email, 
+            phone
+        });
     }
 };

@@ -23,3 +23,29 @@ export function getAge(dob: Date){
     const days = timeDiff / (1000 * 60 * 60 * 24);
     return Math.floor(days / 365.25);
 }
+
+export async function getFromApi(url: string){
+    const result = await fetch(url).then(res => res.json());
+
+    if(!result.success){
+        throw new Error(result.errors);
+    }
+
+    return result.data;
+}
+
+export async function postToApi(url: string, payload: any){
+    const result = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    }).then(res => res.json());
+
+    if(!result.success){
+        throw new Error(result.errors);
+    }
+
+    return result.data;
+}
