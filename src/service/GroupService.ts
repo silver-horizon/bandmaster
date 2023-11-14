@@ -69,7 +69,7 @@ export default {
         });
     },
 
-    async getUserInGroupById(groupId: string, userId: string){
+    async getUserInGroupById(groupId: string, userId: string): Promise<IMember>{
         const result = await fetch(getApiUrl(`/${groupId}/members/${userId}`)).then(res => res.json());
         if(result){
             result.dob = new Date(result.dob);

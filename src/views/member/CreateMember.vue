@@ -84,7 +84,7 @@ import type { Ref } from 'vue';
 import { useSessionStore } from '@/stores/SessionStore';
 import { useRouter } from 'vue-router';
 
-import { debounce } from '../../utils';
+import { debounce, getAge } from '../../utils';
 import UserService from "../../service/UserService";
 import GroupService from "../../service/GroupService";
 
@@ -225,9 +225,6 @@ const age = computed(() => {
         return 100;
     }
 
-    const today = new Date();
-    const timeDiff = today.getTime() - user.value.dob.getTime();
-    const days = timeDiff / (1000 * 60 * 60 * 24);
-    return Math.floor(days / 365.25);
+    return getAge(user.value.dob);
 });
 </script>

@@ -16,3 +16,10 @@ export function dateToString(date: Date){
     const adjustedDate = new Date(date.getTime() - offset);
     return adjustedDate.toISOString().split('T')[0];
 }
+
+export function getAge(dob: Date){
+    const today = new Date();
+    const timeDiff = today.getTime() - dob.getTime();
+    const days = timeDiff / (1000 * 60 * 60 * 24);
+    return Math.floor(days / 365.25);
+}
