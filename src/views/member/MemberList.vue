@@ -15,7 +15,7 @@
         </div>
 
         <div class="hover mb-3">
-            <Card class="h-full">
+            <Card class="h-full center">
                 <template #content>
                     <Button size="large">
                         <RouterLink class="stretched-link" :to="{ name: 'createMember'}">+ Add</RouterLink>

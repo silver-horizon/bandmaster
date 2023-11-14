@@ -27,10 +27,14 @@ button {
     color: inherit;
 }
 
-.p-card.h-full{
+.p-card.h-full.center{
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.p-card.h-full:not(.center) .p-card-body{
+    min-width: 100%;
 }
 
 .p-input-icon-left, .p-input-icon-right{

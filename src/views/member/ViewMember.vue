@@ -12,15 +12,15 @@
                         <label for="email">Email</label>
                     </div>
 
-                    <div class="row">
-                        <div class="col-12 col-lg-6">
+                    <div class="row row-cols-1 row-cols-lg-2">
+                        <div>
                             <div class="p-float-label">
                                 <InputText class="w-full" id="first-name" required v-model="user.firstName" :disabled="!isUser"></InputText>
                                 <label for="first-name">First Name</label>
                             </div>
                         </div>
 
-                        <div class="col-12 col-lg-6">
+                        <div>
                             <div class="p-float-label">
                                 <InputText class="w-full" id="last-name" required v-model="user.lastName" :disabled="!isUser"></InputText>
                                 <label for="last-name">Last Name</label>
@@ -37,19 +37,19 @@
 
             <div class="row row-cols-1 row-cols-lg-2">
                 <div class="mt-5">
-                    <Card class="h-full">
+                    <Card class="h-full" :class="{'center': !user.contact}">
                         <template #content>
                             <h3 class="text-center">Emergency Contact Details</h3>
                             <div v-if="user.contact">
-                                <div class="row">
-                                    <div class="col-12 col-lg-6">
+                                <div class="row row-cols-1 row-cols-lg-2">
+                                    <div>
                                         <div class="p-float-label">
                                             <InputText class="w-full" id="cfirst-name" required v-model="user.contact.firstName" :disabled="!isUser"></InputText>
                                             <label for="cfirst-name">First Name</label>
                                         </div>
                                     </div>
 
-                                    <div class="col-12 col-lg-6">
+                                    <div>
                                         <div class="p-float-label">
                                             <InputText class="w-full" id="clast-name" required v-model="user.contact.lastName" :disabled="!isUser"></InputText>
                                             <label for="clast-name">Last Name</label>
@@ -86,9 +86,26 @@
                     <Card class="h-full">
                         <template #content>
                             <h3 class="text-center">Medical Details</h3>
-                            <div class="text-center">
-                                <p>None recorded.</p>
-                                <Button v-if="isUser">+ Add</Button>
+                            <div class="flex flex-column">
+                                <div class="p-float-label mb-3">
+                                    <InputText class="w-full" id="dr" v-model="user.medical.doctorName" required :disabled="!isUser"></InputText>
+                                    <label for="dr">Doctor's Name</label>
+                                </div>
+
+                                <div class="p-float-label mb-3">
+                                    <Textarea class="w-full" id="dr-address" v-model="user.medical.doctorAddress" required :disabled="!isUser" auto-resize></Textarea>
+                                    <label for="dr-address">Doctor's Address</label>
+                                </div>
+
+                                <div class="p-float-label mb-3">
+                                    <Textarea class="w-full" id="allergies" v-model="user.medical.allergies" required :disabled="!isUser" auto-resize></Textarea>
+                                    <label for="allergies">Allergies</label>
+                                </div>
+
+                                <div class="p-float-label mb-3">
+                                    <Textarea class="w-full" id="other" v-model="user.medical.medicalDetails" required :disabled="!isUser" auto-resize></Textarea>
+                                    <label for="other">Other Medical Details</label>
+                                </div>
                             </div>
                         </template>
                     </Card>
@@ -101,6 +118,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import type { IMember } from '../../../../bandmaster-common/type/Groups';
+import type { IEmergencyContact } from '../../../../bandmaster-common/type/Users';
 
 import { useRoute } from 'vue-router';
 import { ref } from 'vue';
@@ -116,7 +134,7 @@ import Calendar from 'primevue/calendar';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
-import type { IEmergencyContact } from '../../../../bandmaster-common/type/Users';
+import Textarea from 'primevue/textarea';
 
 const route = useRoute();
 const store = useSessionStore();
@@ -137,10 +155,11 @@ GroupService.getUserInGroupById(store.currentGroup?.id ?? '', route.params.id as
     user.value = m;
     age.value = getAge(user.value.dob);
     isUser.value = m.userId === store.currentUser.id;
+    console.log(store.currentUser.id);
     numCols.value = age.value < 18 ? 2 : 1;
 });
 
-async function addContact(){
+async function addContact() {
     const result = await UserService.setContact(user.value!.userId, newContact.value.firstName, newContact.value.lastName, newContact.value.email, newContact.value.phone);
     user.value!.contact = result.contact;
 }
