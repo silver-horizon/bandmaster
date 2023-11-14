@@ -12,7 +12,7 @@ export default {
         return await getFromApi(getApiUrl(`/${id}`));
     },
 
-    async createGroup(name: string, sections: string) {
+    async createGroup(name: string, sections: string): Promise<IGroup> {
         return await postToApi(getApiUrl('/add'), {
             name,
             sections
@@ -20,7 +20,7 @@ export default {
     },
 
     async addMemberToGroup(groupId: string, email: string, firstName: string, lastName: string, dob: Date, sectionId: string,
-        contactFirstName?: string, contactLastName?: string, contactEmail?: string, contactPhone?: string) {
+        contactFirstName?: string, contactLastName?: string, contactEmail?: string, contactPhone?: string): Promise<IMember> {
 
         const payload: {firstName: string, lastName: string, email: string, sectionId: string, dob: string, contact?: any} = {
             firstName,
