@@ -200,7 +200,7 @@ hr {
 
 <script setup lang="ts">
 import { RouterLink, RouterView, useRouter } from 'vue-router';
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { useSessionStore } from './stores/SessionStore';
 import GroupService from './service/GroupService';
 
@@ -251,8 +251,11 @@ function changeGroup() {
     if(match){
       store.currentGroup = match;
     }
+
     return;
   }
+
+  id.value = store.currentGroup?.id;
 
   router.push({ name: "addGroup" });
   toggleNav(false);
