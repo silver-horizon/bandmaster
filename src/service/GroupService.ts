@@ -20,7 +20,7 @@ export default {
     },
 
     async addMemberToGroup(groupId: string, email: string, firstName: string, lastName: string, dob: Date, sectionId: string,
-        contactFirstName?: string, contactLastName?: string, contactEmail?: string, contactPhone?: string): Promise<IMember> {
+        contactFirstName?: string, contactLastName?: string, contactEmail?: string, contactPhone?: string, id?: string): Promise<IMember> {
 
         const payload: {firstName: string, lastName: string, email: string, sectionId: string, dob: string, contact?: any} = {
             firstName,
@@ -39,7 +39,12 @@ export default {
             };
         }
 
-        return await postToApi(getApiUrl(`/${groupId}/members/add`), payload);
+        let url = `/${groupId}/members/add`;
+        if(id){
+            url += `/${id}`;
+        }
+
+        return await postToApi(getApiUrl(url), payload);
     },
 
     async moveMemberToSection(groupId: string, userId: string, newSectionId: string) {

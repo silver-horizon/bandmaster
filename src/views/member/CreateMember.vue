@@ -1,7 +1,6 @@
 <template>
     <h2>Add Member</h2>
     <Message severity="info" v-if="store.groups.length > 1">You are adding this member to <strong>{{ store.currentGroup?.name }}</strong></Message>
-    <Message severity="error" :closable="false" v-if="alreadyExists">This member already exists within {{ store.currentGroup?.name }}!</Message>
 
     <Form @submit="createMember" button-title="Create" :disabled="!canSubmit">
         <div class="p-float-label mb-3" :class="{ 'p-input-icon-right': loading }">
@@ -10,10 +9,29 @@
             <label for="email">Email</label>
         </div>
 
+        <div v-if="matchedUsers.length > 0">
+            <Message severity="info">We found <strong>{{ matchedUsers.length }}</strong> users matching that email address! Please select the correct user from those below</Message>
+            <div class="scroll-x">
+                <Card v-for="user in matchedUsers" class="hover center">
+                    <template #content>
+                        <p>{{ user.firstName }} {{ user.lastName }}</p>
+                        <p>{{ user.dob.toLocaleDateString(window.navigator.language) }}</p>
+                        <p><a href="#" class="stretched-link" @click.prevent="selectUser(user)">Choose</a></p>
+                    </template>
+                </Card>
+                <Card class="hover center">
+                    <template #content>
+                        <p>None of these</p>
+                        <p><a href="#" class="stretched-link" @click.prevent="addNewUser">Add New User</a></p>
+                    </template>
+                </Card>
+            </div>
+        </div>
+
         <Card v-if="newMember != null">
             <template #title>Member Details</template>
             <template #content>
-                <Message severity="info" v-if="newMember" :closable="false">No user found with email {{ user.email }}. Please tell us a bit about them</Message>
+                <Message severity="info" v-if="newMember && matchedUsers.length == 0" :closable="false">No user found with email {{ user.email }}. Please tell us a bit about them</Message>
                 <div class="row">
                     <div class="col-12 col-lg-6">
                         <div class="p-float-label">
@@ -56,7 +74,7 @@
 <script setup lang="ts">
 import type { ISection } from '../../../../bandmaster-common/type/Groups';
 import type { Ref } from 'vue';
-import type { IEmergencyContact } from '../../../../bandmaster-common/type/Users';
+import type { IEmergencyContact, IUser } from '../../../../bandmaster-common/type/Users';
 
 import { useSessionStore } from '@/stores/SessionStore';
 import { useRouter } from 'vue-router';
@@ -79,8 +97,8 @@ import CreateEmergencyContact from "@/components/popup/CreateEmergencyContact.vu
 const store = useSessionStore();
 const router = useRouter();
 
-
-interface IUserDetails{
+interface IUserDetails {
+    id?: string | null,
     fname: string,
     lname: string,
     email: string,
@@ -89,6 +107,7 @@ interface IUserDetails{
 }
 
 const user: Ref<IUserDetails> = ref({
+    id: null,
     fname: "",
     lname: "",
     email: "",
@@ -108,46 +127,63 @@ const showError = ref({
 
 const section: Ref<ISection | null> = ref(null);
 const canSubmit = ref(false);
+const matchedUsers: Ref<IUser[]> = ref([]);
 const newMember: Ref<boolean | null> = ref(null);
 const loading = ref(false);
 const alreadyExists = ref(false);
 
+function selectUser(selectedUser: IUser) {
+    const match = store.currentGroup?.sections.some(x => x.members.some(m => m.userId === selectedUser.id));
+    if(match){
+        Swal.fire({
+            title: "Already Exists",
+            text: `${selectedUser.firstName} ${selectedUser.lastName} is already a member of ${store.currentGroup?.name}`,
+            icon: "error"
+        });
+        return;
+    }
+
+    newMember.value = false;
+    user.value = {
+        id: selectedUser.id,
+        email: selectedUser.email,
+        fname: selectedUser.firstName,
+        lname: selectedUser.lastName,
+        dob: new Date(selectedUser.dob),
+        contact: null
+    }
+
+    canSubmit.value = true;
+}
+
+function addNewUser(){
+    newMember.value = true;
+    canSubmit.value = true;
+}
+
 const checkEmail = debounce((e: Event) => {
+    canSubmit.value = false;
     newMember.value = null;
+
     const target: HTMLInputElement = e.target as HTMLInputElement;
     if (!target.checkValidity()) {
+        matchedUsers.value = [];
         target.classList.add("p-invalid");
         return;
     }
 
     target.classList.remove("p-invalid");
     loading.value = true;
-
-    const match = store.currentGroup?.sections.flatMap(s => s.members).find(m => m.email == user.value.email);
-    if (match) {
-        loading.value = false;
-        alreadyExists.value = true;
-        return;
-    }
-
     alreadyExists.value = false;
 
     UserService.findByEmail(user.value.email).then(res => {
-        loading.value = false;
-        if (!res.email) {
-            newMember.value = true;
-        } else {
-            newMember.value = false;
-            user.value = {
-                email: res.email,
-                fname: res.firstName,
-                lname: res.lastName,
-                dob: null,
-                contact: null
-            }
-        }
-
+        matchedUsers.value = res;
+    }).catch(() => {
+        matchedUsers.value = [];
+        newMember.value = true;
         canSubmit.value = true;
+    }).finally(() => {
+        loading.value = false;
     });
 }, 700);
 
@@ -166,18 +202,19 @@ async function createMember() {
     showError.value.section = false;
     showError.value.dob = false;
 
-    if(age.value >= 18){
+    if (age.value >= 18) {
         user.value.contact = null;
     }
 
-    const { fname, lname, email, dob, contact } = user.value;
-    const res = await GroupService.addMemberToGroup(store.currentGroup.id, email, fname, lname, dob, section.value.id, 
-        contact?.firstName, contact?.lastName, contact?.email, contact?.phone);
-
-    if (res.success === false) {
+    const { fname, lname, email, dob, contact, id } = user.value;
+    let res;
+    try {
+        res = await GroupService.addMemberToGroup(store.currentGroup.id, email, fname, lname, dob, section.value.id,
+            contact?.firstName, contact?.lastName, contact?.email, contact?.phone, id);
+    } catch (ex: any) {
         await Swal.fire({
             title: "Failed to Add Member",
-            text: res.errors.join(", "),
+            text: ex.join(", "),
             icon: "error"
         });
         return;
@@ -193,7 +230,7 @@ async function createMember() {
 }
 
 const age = computed(() => {
-    if(!user.value.dob){
+    if (!user.value.dob) {
         return 100;
     }
 

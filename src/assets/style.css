@@ -27,7 +27,7 @@ button {
     color: inherit;
 }
 
-.p-card.h-full.center{
+.p-card.h-full.center, .scroll-x .p-card.center{
     display: flex;
     align-items: center;
     justify-content: center;

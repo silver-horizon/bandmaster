@@ -17,4 +17,6 @@ app.use(createPinia());
 app.use(router);
 app.use(PrimeVue);
 
+app.config.globalProperties.window = window;
+
 app.mount('#app');
