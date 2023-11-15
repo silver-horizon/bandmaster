@@ -200,7 +200,7 @@ hr {
 
 <script setup lang="ts">
 import { RouterLink, RouterView, useRouter } from 'vue-router';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useSessionStore } from './stores/SessionStore';
 import GroupService from './service/GroupService';
 
@@ -210,6 +210,10 @@ const router = useRouter();
 const store = useSessionStore();
 const loadingGroups = ref(true);
 const id = ref(store.currentGroup?.id);
+
+watch(() => store.currentGroup, () => {
+  id.value = store.currentGroup?.id;
+});
 
 const availableGroups = computed(() => {
   return store.groups.concat([{
