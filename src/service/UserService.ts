@@ -1,4 +1,5 @@
 import type { IUser } from "../../../bandmaster-common/type/Users";
+import type { IEmergencyContactDto } from "@/type/Dto";
 
 import { getFromApi, postToApi } from "@/utils";
 
@@ -17,13 +18,8 @@ export default {
         return user;
     },
 
-    async setContact(id: string, firstName: string, lastName: string, email: string, phone: string): Promise<IUser>{
-        const user: IUser = await postToApi(getApiUrl(`/${id}/emergency-contact`), {
-            firstName, 
-            lastName, 
-            email, 
-            phone
-        });
+    async setContact(id: string, contactData: IEmergencyContactDto): Promise<IUser>{
+        const user: IUser = await postToApi(getApiUrl(`/${id}/emergency-contact`), contactData);
         user.dob = new Date(user.dob);
         return user;
     }

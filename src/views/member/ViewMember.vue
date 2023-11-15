@@ -159,7 +159,7 @@ GroupService.getUserInGroupById(store.currentGroup?.id ?? '', route.params.id as
 });
 
 async function addContact() {
-    const result = await UserService.setContact(user.value!.userId, newContact.value.firstName, newContact.value.lastName, newContact.value.email, newContact.value.phone);
+    const result = await UserService.setContact(user.value!.userId, {...newContact.value});
     user.value!.contact = result.contact;
 }
 </script>
