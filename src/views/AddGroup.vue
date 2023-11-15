@@ -25,9 +25,6 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import { useMockStore } from '../stores/MockDataStore';
-const mockStore = useMockStore();
-
 import { useSessionStore } from '@/stores/SessionStore';
 import GroupService from '@/service/GroupService';
 const store = useSessionStore();
@@ -36,7 +33,10 @@ const name = ref("");
 const rawSections = ref("");
 
 async function create() {
-    const group = await GroupService.createGroup(name.value, rawSections.value);
+    const group = await GroupService.createGroup({
+        name: name.value, 
+        sections: rawSections.value
+    });
 
     store.currentGroup = group;
     store.groups.push(group);

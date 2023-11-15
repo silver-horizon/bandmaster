@@ -28,7 +28,7 @@ export async function getFromApi(url: string){
     const result = await fetch(url).then(res => res.json());
 
     if(!result.success){
-        throw new Error(result.errors);
+        throw new Error(result.errors.join(", "));
     }
 
     return result.data;
@@ -44,7 +44,7 @@ export async function postToApi(url: string, payload: any){
     }).then(res => res.json());
 
     if(!result.success){
-        throw new Error(result.errors);
+        throw new Error(result.errors.join(", "));
     }
 
     return result.data;

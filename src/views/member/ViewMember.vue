@@ -88,22 +88,22 @@
                             <h3 class="text-center">Medical Details</h3>
                             <div class="flex flex-column">
                                 <div class="p-float-label mb-3">
-                                    <InputText class="w-full" id="dr" v-model="user.medical.doctorName" required :disabled="!isUser"></InputText>
+                                    <InputText class="w-full" id="dr" v-model="user.medical.doctorName" :disabled="!isUser"></InputText>
                                     <label for="dr">Doctor's Name</label>
                                 </div>
 
                                 <div class="p-float-label mb-3">
-                                    <Textarea class="w-full" id="dr-address" v-model="user.medical.doctorAddress" required :disabled="!isUser" auto-resize></Textarea>
+                                    <Textarea class="w-full" id="dr-address" v-model="user.medical.doctorAddress" :disabled="!isUser" auto-resize></Textarea>
                                     <label for="dr-address">Doctor's Address</label>
                                 </div>
 
                                 <div class="p-float-label mb-3">
-                                    <Textarea class="w-full" id="allergies" v-model="user.medical.allergies" required :disabled="!isUser" auto-resize></Textarea>
+                                    <Textarea class="w-full" id="allergies" v-model="user.medical.allergies" :disabled="!isUser" auto-resize></Textarea>
                                     <label for="allergies">Allergies</label>
                                 </div>
 
                                 <div class="p-float-label mb-3">
-                                    <Textarea class="w-full" id="other" v-model="user.medical.medicalDetails" required :disabled="!isUser" auto-resize></Textarea>
+                                    <Textarea class="w-full" id="other" v-model="user.medical.medicalDetails" :disabled="!isUser" auto-resize></Textarea>
                                     <label for="other">Other Medical Details</label>
                                 </div>
                             </div>

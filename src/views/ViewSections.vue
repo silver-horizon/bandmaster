@@ -41,7 +41,7 @@ async function changeSection(e: AddedEvent, sectionId: string){
         return;
     }
 
-    await GroupService.moveMemberToSection(store.currentGroup.id, e.added.element.id, sectionId);
+    await GroupService.moveMemberToSection(store.currentGroup.id, e.added.element.id, {id: sectionId});
 }
 
 const store = useSessionStore();

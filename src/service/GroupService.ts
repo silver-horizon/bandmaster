@@ -1,4 +1,5 @@
 import type { IGroup, IMember } from "../../../bandmaster-common/type/Groups";
+import type {ICreateMemberDto, ICreateGroupDto, IMoveSectionDto} from "@/type/Dto";
 import { dateToString, getFromApi, postToApi } from "@/utils";
 
 const getApiUrl = (endpoint: string = '') => `${import.meta.env.VITE_API_URL}/groups${endpoint}`;
@@ -12,31 +13,20 @@ export default {
         return await getFromApi(getApiUrl(`/${id}`));
     },
 
-    async createGroup(name: string, sections: string): Promise<IGroup> {
-        return await postToApi(getApiUrl('/add'), {
-            name,
-            sections
-        });
+    async createGroup(groupData: ICreateGroupDto): Promise<IGroup> {
+        return await postToApi(getApiUrl('/add'), groupData);
     },
 
-    async addMemberToGroup(groupId: string, email: string, firstName: string, lastName: string, dob: Date, sectionId: string,
-        contactFirstName?: string, contactLastName?: string, contactEmail?: string, contactPhone?: string, id?: string): Promise<IMember> {
+    async addMemberToGroup(groupId: string, sectionId: string, memberData: ICreateMemberDto, id: string | null = null): Promise<IMember> {
 
-        const payload: {firstName: string, lastName: string, email: string, sectionId: string, dob: string, contact?: any} = {
-            firstName,
-            lastName,
-            email,
-            sectionId,
-            dob: dateToString(dob)
+        const payload: {firstName: string, lastName: string, email: string, dob: string, contact?: any, sectionId: string} = {
+            ...memberData,
+            dob: dateToString(memberData.dob),
+            sectionId
         };
 
-        if (contactFirstName) {
-            payload.contact = {
-                firstName: contactFirstName,
-                lastName: contactLastName,
-                email: contactEmail,
-                phone: contactPhone
-            };
+        if (memberData.contact) {
+            payload.contact = memberData.contact;
         }
 
         let url = `/${groupId}/members/add`;
@@ -47,8 +37,8 @@ export default {
         return await postToApi(getApiUrl(url), payload);
     },
 
-    async moveMemberToSection(groupId: string, userId: string, newSectionId: string) {
-        return await postToApi(getApiUrl(`/${groupId}/members/${userId}/section`), {id: newSectionId});
+    async moveMemberToSection(groupId: string, userId: string, sectionData: IMoveSectionDto) {
+        return await postToApi(getApiUrl(`/${groupId}/members/${userId}/section`), sectionData);
     },
 
     async getUserInGroupById(groupId: string, userId: string): Promise<IMember>{

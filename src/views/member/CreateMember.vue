@@ -206,15 +206,20 @@ async function createMember() {
         user.value.contact = null;
     }
 
-    const { fname, lname, email, dob, contact, id } = user.value;
+    const { fname: firstName, lname: lastName, email, dob, contact, id } = user.value;
     let res;
     try {
-        res = await GroupService.addMemberToGroup(store.currentGroup.id, email, fname, lname, dob, section.value.id,
-            contact?.firstName, contact?.lastName, contact?.email, contact?.phone, id);
+        res = await GroupService.addMemberToGroup(store.currentGroup.id, section.value.id, {
+            firstName,
+            lastName,
+            email,
+            dob,
+            contact
+        }, id); 
     } catch (ex: any) {
         await Swal.fire({
             title: "Failed to Add Member",
-            text: ex.join(", "),
+            text: ex.message,
             icon: "error"
         });
         return;
@@ -222,11 +227,13 @@ async function createMember() {
 
     await Swal.fire({
         title: "Created Member",
-        text: `Member ${fname} ${lname} has been successfully added to group ${store.currentGroup?.name}`,
+        text: `Member ${firstName} ${lastName} has been successfully added to group ${store.currentGroup?.name}`,
         icon: "success"
     });
 
-    router.push({ name: 'memberList' });
+    router.push({ name: 'viewMember', params: {
+        id: res.id
+    } });
 }
 
 const age = computed(() => {
