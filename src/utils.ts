@@ -1,6 +1,6 @@
-export function debounce(fn: (...args: any[]) => void, wait: number) {
+export const debounce = (fn: (...args: any[]) => void, wait: number) => {
     let timer: number | undefined;
-    return function (...args: any[]) {
+    return (...args: any[]) => {
         if (timer) {
             clearTimeout(timer); // clear any pre-existing timer
         }
