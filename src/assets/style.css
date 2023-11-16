@@ -56,3 +56,13 @@ button {
 .handle{
     cursor: pointer;
 }
+
+.invalid *{
+    color: var(--red-500);
+    border-color: var(--red-500);
+}
+
+.success *{
+    color: var(--green-500);
+    border-color: var(--green-500);
+}
