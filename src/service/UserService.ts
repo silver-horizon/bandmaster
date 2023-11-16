@@ -1,5 +1,5 @@
 import type { IUser } from "../../../bandmaster-common/type/Users";
-import type { IEmergencyContactDto } from "@/type/Dto";
+import type { IEmergencyContactDto, IUpdateUserDto } from "@/type/Dto";
 
 import { getFromApi, postToApi } from "@/utils";
 
@@ -22,5 +22,21 @@ export default {
         const user: IUser = await postToApi(getApiUrl(`/${id}/emergency-contact`), contactData);
         user.dob = new Date(user.dob);
         return user;
+    },
+
+    async updateUser(id: string, params: IUpdateUserDto){
+        const result = await fetch(getApiUrl(`/${id}`), {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify(params)
+        }).then(res => res.json());
+
+        if(!result.success){
+            throw new Error(result.errors.join(", "));
+        }
+
+        return result;
     }
 };

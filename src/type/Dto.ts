@@ -21,3 +21,16 @@ export interface ICreateGroupDto {
 export interface IMoveSectionDto {
     id: string
 };
+
+export interface IUpdateUserDto {
+    firstName?: string,
+    lastName?: string,
+    contactFirstName?: string,
+    contactLastName?: string,
+    contactEmail?: string,
+    contactPhone?: string,
+    doctorName?: string,
+    doctorAddress?: string,
+    allergies?: string,
+    medicalDetails?: string
+}

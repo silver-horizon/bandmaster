@@ -5,39 +5,42 @@
         <h2>{{ user.firstName }} {{ user.lastName }}</h2>
 
         <Form button-title="Update" :disabled="!isUser" :unstyled="true">
-            <Card>
-                <template #content>
-                    <div class="p-float-label mb-3">
-                        <InputText type="email" class="w-full" id="email" required v-model="user.email" :disabled="!isUser"></InputText>
-                        <label for="email">Email</label>
-                    </div>
-
-                    <div class="row row-cols-1 row-cols-lg-2">
-                        <div>
-                            <div class="p-float-label">
-                                <InputText class="w-full" id="first-name" required v-model="user.firstName" :disabled="!isUser"></InputText>
-                                <label for="first-name">First Name</label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="p-float-label">
-                                <InputText class="w-full" id="last-name" required v-model="user.lastName" :disabled="!isUser"></InputText>
-                                <label for="last-name">Last Name</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-float-label">
-                        <Calendar class="w-full" id="dob" required v-model="user.dob" :max-date="new Date()" :disabled="true"></Calendar>
-                        <label for="dob">Date of Birth</label>
-                    </div>
-                </template>
-            </Card>
-
             <div class="row row-cols-1 row-cols-lg-2">
-                <div class="mt-5">
-                    <Card class="h-full" :class="{'center': !user.contact}">
+                <div class="mb-3">
+                    <Card class="h-full">
+                        <template #content>
+                            <h3 class="text-center">Member Details</h3>
+                            <div class="row row-cols-1 row-cols-lg-2">
+                                <div>
+                                    <div class="p-float-label">
+                                        <InputText class="w-full" id="first-name" required v-model="user.firstName" :disabled="!isUser"></InputText>
+                                        <label for="first-name">First Name</label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="p-float-label">
+                                        <InputText class="w-full" id="last-name" required v-model="user.lastName" :disabled="!isUser"></InputText>
+                                        <label for="last-name">Last Name</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-float-label mb-3">
+                                <InputText type="email" class="w-full" id="email" required v-model="user.email" :disabled="true"></InputText>
+                                <label for="email">Email</label>
+                            </div>
+
+                            <div class="p-float-label">
+                                <Calendar class="w-full" id="dob" required v-model="user.dob" :max-date="new Date()" :disabled="true"></Calendar>
+                                <label for="dob">Date of Birth</label>
+                            </div>
+                        </template>
+                    </Card>
+                </div>
+
+                <div class="mb-3">
+                    <Card class="h-full" :class="{ 'center': !user.contact }">
                         <template #content>
                             <h3 class="text-center">Emergency Contact Details</h3>
                             <div v-if="user.contact">
@@ -81,36 +84,22 @@
                         </template>
                     </Card>
                 </div>
-
-                <div class="mt-5">
-                    <Card class="h-full">
-                        <template #content>
-                            <h3 class="text-center">Medical Details</h3>
-                            <div class="flex flex-column">
-                                <div class="p-float-label mb-3">
-                                    <InputText class="w-full" id="dr" v-model="user.medical.doctorName" :disabled="!isUser"></InputText>
-                                    <label for="dr">Doctor's Name</label>
-                                </div>
-
-                                <div class="p-float-label mb-3">
-                                    <Textarea class="w-full" id="dr-address" v-model="user.medical.doctorAddress" :disabled="!isUser" auto-resize></Textarea>
-                                    <label for="dr-address">Doctor's Address</label>
-                                </div>
-
-                                <div class="p-float-label mb-3">
-                                    <Textarea class="w-full" id="allergies" v-model="user.medical.allergies" :disabled="!isUser" auto-resize></Textarea>
-                                    <label for="allergies">Allergies</label>
-                                </div>
-
-                                <div class="p-float-label mb-3">
-                                    <Textarea class="w-full" id="other" v-model="user.medical.medicalDetails" :disabled="!isUser" auto-resize></Textarea>
-                                    <label for="other">Other Medical Details</label>
-                                </div>
-                            </div>
-                        </template>
-                    </Card>
-                </div>
             </div>
+
+
+            <Card class="h-full">
+                <template #content>
+                    <h3 class="text-center">Medical Details</h3>
+                    <div class="flex flex-column">
+                        <ImmediateUpdate v-model="user.medical.doctor" label="Doctor's Name" field-name="doctorName"></ImmediateUpdate>
+                        <ImmediateUpdate v-model="user.medical.doctorAddress" label="Doctor's Address" field-name="doctorAddress" :component="Textarea"></ImmediateUpdate>
+                        <ImmediateUpdate v-model="user.medical.allergies" label="Allergies" field-name="allergies" :component="Textarea"></ImmediateUpdate>
+                        <ImmediateUpdate v-model="user.medical.medicalDetails" label="Other Medical Details" field-name="medicalDetails" :component="Textarea"></ImmediateUpdate>
+                    </div>
+                </template>
+            </Card>
+
+
         </Form>
     </div>
 </template>
@@ -119,9 +108,11 @@
 import type { Ref } from 'vue';
 import type { IMember } from '../../../../bandmaster-common/type/Groups';
 import type { IEmergencyContact } from '../../../../bandmaster-common/type/Users';
+import type {IUpdateUserDto} from "@/type/Dto";
+import type { ILooseObject } from '../../../../bandmaster-common/type/Util';
 
 import { useRoute } from 'vue-router';
-import { ref } from 'vue';
+import { ref, provide } from 'vue';
 import GroupService from '@/service/GroupService';
 import UserService from '@/service/UserService';
 import { useSessionStore } from '@/stores/SessionStore';
@@ -135,6 +126,9 @@ import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
+import ImmediateUpdate from '@/components/ImmediateUpdate.vue';
+
+provide("callback", async (params: ILooseObject) => await UserService.updateUser(user.value!.id, params as IUpdateUserDto));
 
 const route = useRoute();
 const store = useSessionStore();
@@ -159,7 +153,7 @@ GroupService.getUserInGroupById(store.currentGroup?.id ?? '', route.params.id as
 });
 
 async function addContact() {
-    const result = await UserService.setContact(user.value!.userId, {...newContact.value});
+    const result = await UserService.setContact(user.value!.userId, { ...newContact.value });
     user.value!.contact = result.contact;
 }
 </script>
