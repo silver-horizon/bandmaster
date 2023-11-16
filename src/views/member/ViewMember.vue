@@ -4,7 +4,6 @@
     <div v-if="user">
         <h2>{{ user.firstName }} {{ user.lastName }}</h2>
 
-        <Form button-title="Update" :disabled="!isUser" :unstyled="true">
             <div class="row row-cols-1 row-cols-lg-2">
                 <div class="mb-3">
                     <Card class="h-full">
@@ -12,27 +11,21 @@
                             <h3 class="text-center">Member Details</h3>
                             <div class="row row-cols-1 row-cols-lg-2">
                                 <div>
-                                    <div class="p-float-label">
-                                        <InputText class="w-full" id="first-name" required v-model="user.firstName" :disabled="!isUser"></InputText>
-                                        <label for="first-name">First Name</label>
-                                    </div>
+                                    <ImmediateUpdate label="First Name" field-name="firstName" v-model="user.firstName" :props="{disabled: !isUser}"></ImmediateUpdate>
                                 </div>
 
                                 <div>
-                                    <div class="p-float-label">
-                                        <InputText class="w-full" id="last-name" required v-model="user.lastName" :disabled="!isUser"></InputText>
-                                        <label for="last-name">Last Name</label>
-                                    </div>
+                                    <ImmediateUpdate label="Last Name" field-name="lastName" v-model="user.lastName" :props="{disabled: !isUser}"></ImmediateUpdate>
                                 </div>
                             </div>
 
                             <div class="p-float-label mb-3">
-                                <InputText type="email" class="w-full" id="email" required v-model="user.email" :disabled="true"></InputText>
+                                <InputText type="email" class="w-full" id="email" v-model="user.email" :disabled="true"></InputText>
                                 <label for="email">Email</label>
                             </div>
 
                             <div class="p-float-label">
-                                <Calendar class="w-full" id="dob" required v-model="user.dob" :max-date="new Date()" :disabled="true"></Calendar>
+                                <Calendar class="w-full" input-id="dob" v-model="user.dob" :max-date="new Date()" :disabled="true"></Calendar>
                                 <label for="dob">Date of Birth</label>
                             </div>
                         </template>
@@ -46,29 +39,16 @@
                             <div v-if="user.contact">
                                 <div class="row row-cols-1 row-cols-lg-2">
                                     <div>
-                                        <div class="p-float-label">
-                                            <InputText class="w-full" id="cfirst-name" required v-model="user.contact.firstName" :disabled="!isUser"></InputText>
-                                            <label for="cfirst-name">First Name</label>
-                                        </div>
+                                        <ImmediateUpdate label="First Name" field-name="contactFirstName" v-model="user.contact.firstName" :props="{disabled: !isUser}"></ImmediateUpdate>
                                     </div>
 
                                     <div>
-                                        <div class="p-float-label">
-                                            <InputText class="w-full" id="clast-name" required v-model="user.contact.lastName" :disabled="!isUser"></InputText>
-                                            <label for="clast-name">Last Name</label>
-                                        </div>
+                                            <ImmediateUpdate label="Last Name" field-name="contactLastName" v-model="user.contact.lastName" :props="{disabled: !isUser}"></ImmediateUpdate>
                                     </div>
                                 </div>
 
-                                <div class="p-float-label mb-3">
-                                    <InputText type="email" class="w-full" id="cemail" v-model="user.contact.email" required :disabled="!isUser"></InputText>
-                                    <label for="cemail">Email</label>
-                                </div>
-
-                                <div class="p-float-label mb-3">
-                                    <InputText class="w-full" id="phone" v-model="user.contact.phone" maxlength="15" required :disabled="!isUser"></InputText>
-                                    <label for="phone">Phone</label>
-                                </div>
+                                <ImmediateUpdate label="Email" field-name="contactEmail" v-model="user.contact.email" :props="{disabled: !isUser, type: 'email'}"></ImmediateUpdate>
+                                <ImmediateUpdate label="Phone" field-name="contactPhone" v-model="user.contact.phone" :props="{disabled: !isUser, maxLength: 15}"></ImmediateUpdate>
                             </div>
 
                             <div v-else class="text-center">
@@ -91,16 +71,13 @@
                 <template #content>
                     <h3 class="text-center">Medical Details</h3>
                     <div class="flex flex-column">
-                        <ImmediateUpdate v-model="user.medical.doctor" label="Doctor's Name" field-name="doctorName"></ImmediateUpdate>
-                        <ImmediateUpdate v-model="user.medical.doctorAddress" label="Doctor's Address" field-name="doctorAddress" :component="Textarea"></ImmediateUpdate>
-                        <ImmediateUpdate v-model="user.medical.allergies" label="Allergies" field-name="allergies" :component="Textarea"></ImmediateUpdate>
-                        <ImmediateUpdate v-model="user.medical.medicalDetails" label="Other Medical Details" field-name="medicalDetails" :component="Textarea"></ImmediateUpdate>
+                        <ImmediateUpdate v-model="user.medical.doctor" label="Doctor's Name" field-name="doctorName" :props="{ disabled: !isUser }"></ImmediateUpdate>
+                        <ImmediateUpdate v-model="user.medical.doctorAddress" label="Doctor's Address" field-name="doctorAddress" :component="Textarea" :props="{ disabled: !isUser }"></ImmediateUpdate>
+                        <ImmediateUpdate v-model="user.medical.allergies" label="Allergies" field-name="allergies" :component="Textarea" :props="{ disabled: !isUser }"></ImmediateUpdate>
+                        <ImmediateUpdate v-model="user.medical.medicalDetails" label="Other Medical Details" field-name="medicalDetails" :component="Textarea" :props="{ disabled: !isUser }"></ImmediateUpdate>
                     </div>
                 </template>
             </Card>
-
-
-        </Form>
     </div>
 </template>
 
@@ -108,7 +85,7 @@
 import type { Ref } from 'vue';
 import type { IMember } from '../../../../bandmaster-common/type/Groups';
 import type { IEmergencyContact } from '../../../../bandmaster-common/type/Users';
-import type {IUpdateUserDto} from "@/type/Dto";
+import type { IUpdateUserDto } from "../../../../bandmaster-common/type/Dto";
 import type { ILooseObject } from '../../../../bandmaster-common/type/Util';
 
 import { useRoute } from 'vue-router';
