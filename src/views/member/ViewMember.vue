@@ -105,7 +105,7 @@ import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import ImmediateUpdate from '@/components/ImmediateUpdate.vue';
 
-provide("callback", async (params: ILooseObject) => await UserService.updateUser(user.value!.id, params as IUpdateUserDto));
+provide("callback", async (params: ILooseObject) => await UserService.updateUser(user.value!.userId, params as IUpdateUserDto));
 
 const route = useRoute();
 const store = useSessionStore();
