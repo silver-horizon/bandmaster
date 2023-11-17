@@ -1,0 +1,41 @@
+.p-float-label {
+    margin-top: 2rem;
+}
+
+.p-float-label *:focus~label,
+.p-float-label *.p-focus~label,
+.p-float-label *.p-filled~label,
+.p-float-label *.p-inputwrapper-filled~label{
+    left: 0;
+    color: inherit;
+}
+
+.p-card.h-full.center, .scroll-x .p-card.center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.p-card.h-full:not(.center) .p-card-body{
+    min-width: 100%;
+}
+
+.p-input-icon-left, .p-input-icon-right{
+    display: block;
+}
+
+.p-card.list-item{
+    border-radius: 0;
+}
+
+.p-card.list-item:not(:last-child){
+    border-bottom: solid 1px rgba(0,0,0,0.2);
+}
+
+.p-card.list-item .p-card-body{
+    padding: 0 1.25rem;
+}
+
+.p-dialog{
+    max-width: 90vw;
+}
