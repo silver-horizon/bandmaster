@@ -1,4 +1,4 @@
-import type { IUser, IPreferences } from "../../../bandmaster-common/type/Users";
+import type { IUser, IPreferences, IAccount } from "../../../bandmaster-common/type/Users";
 import type { IEmergencyContactDto, IUpdateUserDto } from "@/type/Dto";
 
 import { getFromApi, postToApi } from "@/utils";
@@ -6,10 +6,10 @@ import { getFromApi, postToApi } from "@/utils";
 const getApiUrl = (endpoint: string = '') => `${import.meta.env.VITE_API_URL}/users${endpoint}`;
 
 export default {
-    async findByEmail(email: string): Promise<IUser[]>{
-        const users: IUser[] = await getFromApi(getApiUrl(`/email/${email}`));
-        users.forEach(u => u.dob = new Date(u.dob));
-        return users;
+    async findByEmail(email: string): Promise<IAccount>{
+        const account: IAccount =  await getFromApi(getApiUrl(`/email/${email}`));
+        account.users.forEach(u => u.dob = new Date(u.dob));
+        return account;
     },
 
     async getById(id: string): Promise<IUser>{

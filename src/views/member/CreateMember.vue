@@ -11,6 +11,7 @@
 
         <div v-if="matchedUsers.length > 0">
             <Message severity="info">We found <strong>{{ matchedUsers.length }}</strong> users matching that email address! Please select the correct user from those below</Message>
+            <Message severity="error">This user has disabled adding new users to their email address. If no matching user can be found then please ask them to add their details</Message>
             <div class="scroll-x">
                 <Card v-for="user in matchedUsers" class="hover center">
                     <template #content>
@@ -19,7 +20,7 @@
                         <p><a href="#" class="stretched-link" @click.prevent="selectUser(user)">Choose</a></p>
                     </template>
                 </Card>
-                <Card class="hover center">
+                <Card class="hover center" v-if="canCreate">
                     <template #content>
                         <p>None of these</p>
                         <p><a href="#" class="stretched-link" @click.prevent="addNewUser">Add New User</a></p>
@@ -131,9 +132,10 @@ const matchedUsers: Ref<IUser[]> = ref([]);
 const newMember: Ref<boolean | null> = ref(null);
 const loading = ref(false);
 const alreadyExists = ref(false);
+const canCreate = ref(false);
 
 function selectUser(selectedUser: IUser) {
-    const match = store.currentGroup?.sections.some(x => x.members.some(m => m.userId === selectedUser.id));
+    const match = store.currentGroup?.sections.some(x => x.members.some(m => m.id === selectedUser.id));
     if(match){
         Swal.fire({
             title: "Already Exists",
@@ -177,8 +179,11 @@ const checkEmail = debounce((e: Event) => {
     alreadyExists.value = false;
 
     UserService.findByEmail(user.value.email).then(res => {
-        matchedUsers.value = res;
-    }).catch(() => {
+        console.log(res);
+        matchedUsers.value = res.users;
+        canCreate.value = res.preferences.allowCreate;
+    }).catch((e) => {
+        console.error(e);
         matchedUsers.value = [];
         newMember.value = true;
         canSubmit.value = true;
