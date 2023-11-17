@@ -1,4 +1,4 @@
-import type { IUser } from "../../../bandmaster-common/type/Users";
+import type { IUser, IPreferences } from "../../../bandmaster-common/type/Users";
 import type { IEmergencyContactDto, IUpdateUserDto } from "@/type/Dto";
 
 import { getFromApi, postToApi } from "@/utils";
@@ -38,5 +38,13 @@ export default {
         }
 
         return result;
+    },
+
+    async getPreferences(id: string): Promise<IPreferences>{
+        return await getFromApi(getApiUrl(`/${id}/settings`));
+    },
+
+    async setPreferences(id: string, preferences: IPreferences){
+        return await postToApi(getApiUrl(`/${id}/settings`), preferences);
     }
 };
