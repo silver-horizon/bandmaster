@@ -25,7 +25,7 @@ export function getAge(dob: Date){
 }
 
 export async function getFromApi(url: string){
-    const result = await fetch(url).then(res => res.json());
+    const result = await fetch(getApiPath(url)).then(res => res.json());
 
     if(!result.success){
         throw new Error(result.errors.join(", "));
@@ -35,7 +35,7 @@ export async function getFromApi(url: string){
 }
 
 export async function postToApi(url: string, payload: any){
-    const result = await fetch(url, {
+    const result = await fetch(getApiPath(url), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -48,4 +48,24 @@ export async function postToApi(url: string, payload: any){
     }
 
     return result.data;
-}
+};
+
+export async function patchApi(url: string, payload: any){
+    const result = await fetch(getApiPath(url), {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': "application/json"
+        },
+        body: JSON.stringify(payload)
+    }).then(res => res.json());
+
+    if(!result.success){
+        throw new Error(result.errors.join(", "));
+    }
+
+    return result.data;
+};
+
+export const getApiPath = (endpoint:string) => {
+    return import.meta.env.VITE_API_URL + endpoint
+};

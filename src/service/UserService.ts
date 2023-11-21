@@ -1,9 +1,9 @@
 import type { IUser, IPreferences, IAccount } from "../../../bandmaster-common/type/Users";
 import type { IEmergencyContactDto, IUpdateUserDto } from "@/type/Dto";
 
-import { getFromApi, postToApi } from "@/utils";
+import { getFromApi, patchApi, postToApi } from "@/utils";
 
-const getApiUrl = (endpoint: string = '') => `${import.meta.env.VITE_API_URL}/users${endpoint}`;
+const getApiUrl = (endpoint: string = '') => `/users${endpoint}`;
 
 export default {
     async findByEmail(email: string): Promise<IAccount>{
@@ -25,18 +25,7 @@ export default {
     },
 
     async updateUser(id: string, params: IUpdateUserDto){
-        const result = await fetch(getApiUrl(`/${id}`), {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': "application/json"
-            },
-            body: JSON.stringify(params)
-        }).then(res => res.json());
-
-        if(!result.success){
-            throw new Error(result.errors.join(", "));
-        }
-
+        const result = await patchApi(getApiUrl(`/${id}`), params);
         return result;
     },
 

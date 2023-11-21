@@ -3,7 +3,7 @@ import type { IUser } from "../../../bandmaster-common/type/Users";
 import type {ICreateMemberDto, ICreateGroupDto, IMoveSectionDto} from "../../../bandmaster-common/type/Dto";
 import { dateToString, getFromApi, postToApi } from "@/utils";
 
-const getApiUrl = (endpoint: string = '') => `${import.meta.env.VITE_API_URL}/groups${endpoint}`;
+const getApiUrl = (endpoint: string = '') => `/groups${endpoint}`;
 
 export default {
     async getGroups(): Promise<IGroup[]> {
