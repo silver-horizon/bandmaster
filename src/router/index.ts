@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import {useSessionStore} from "../stores/SessionStore";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -28,9 +30,28 @@ const router = createRouter({
       component: () => import("@/views/member/CreateMember.vue")
     },
     {
+      path: '/members/me',
+      name: 'myProfile',
+      component: () => import("@/views/member/ViewMember.vue"),
+      props: () => {
+        const store = useSessionStore();
+        return {
+          id: store.currentUser.id
+        };
+      }
+    },
+    {
       path: '/members/:id',
       name: 'viewMember',
-      component: () => import("@/views/member/ViewMember.vue")
+      component: () => import("@/views/member/ViewMember.vue"),
+      props: (route) => {
+        const store = useSessionStore();
+
+        return {
+        id: route.params.id,
+        group: store.currentGroup!.id
+      }
+    }
     },
 
     //section

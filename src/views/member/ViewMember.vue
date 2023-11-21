@@ -9,7 +9,7 @@
         <div class="mb-3">
             <Button icon="pi pi-cog" outlined v-if="isUser" @click="showEditPreferences = true"></Button>
             <Dialog v-model:visible="showEditPreferences" modal header="Edit Settings">
-                <Form :unstyled="true" @submit="savePreferences">
+                <Form :unstyled="true" @submit="savePreferences" v-if="preferences">
                     <EditSettings v-model="preferences"></EditSettings>
                 </Form>
             </Dialog>
@@ -35,7 +35,7 @@
                             <label for="email">Email</label>
                         </div>
 
-                        <div class="p-float-label">
+                        <div class="p-float-label mb-3">
                             <Calendar class="w-full" input-id="dob" v-model="user.dob" :max-date="new Date()" :disabled="true"></Calendar>
                             <label for="dob">Date of Birth</label>
                         </div>
@@ -77,7 +77,6 @@
             </div>
         </div>
 
-
         <Card class="h-full">
             <template #content>
                 <h3 class="text-center">Medical Details</h3>
@@ -98,7 +97,6 @@ import type { IUser, IEmergencyContact, IPreferences } from '../../../../bandmas
 import type { IUpdateUserDto } from "../../../../bandmaster-common/type/Dto";
 import type { ILooseObject } from '../../../../bandmaster-common/type/Util';
 
-import { useRoute } from 'vue-router';
 import { ref, provide } from 'vue';
 import GroupService from '@/service/GroupService';
 import UserService from '@/service/UserService';
@@ -117,6 +115,11 @@ import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import Message from 'primevue/message';
 
+const props = defineProps<{
+    id: string,
+    groupId?: string
+}>();
+
 provide("callback", async (params: ILooseObject) => {
     if(!canEdit.value){
         throw new Error("Editing is disabled");
@@ -125,7 +128,6 @@ provide("callback", async (params: ILooseObject) => {
     return await UserService.updateUser(user.value!.id, params as IUpdateUserDto);
 });
 
-const route = useRoute();
 const store = useSessionStore();
 
 const user: Ref<IUser | null> = ref(null);
@@ -144,18 +146,22 @@ const newContact: Ref<IEmergencyContact> = ref({
 
 const showEditPreferences = ref(false);
 
-const id = route.params.id as string;
+const toLoad = [];
+if(props.groupId){
+    toLoad.push(GroupService.getUserInGroupById(props.groupId, props.id));
+} else {
+    toLoad.push(UserService.getById(props.id));
+}
 
-Promise.all([
-    GroupService.getUserInGroupById(store.currentGroup!.id, id),
-    UserService.getPreferences(id)
-]).then(([m, pref]) => {
-    user.value = m;
-    preferences.value = pref;
+toLoad.push(UserService.getPreferences(props.id))
 
-    age.value = getAge(m.dob);
-    isUser.value = m.id === store.currentUser.id;
-    canEdit.value = isUser.value || pref.allowEdit;
+Promise.all(toLoad).then(([m, pref]) => {
+    user.value = m as IUser;
+    preferences.value = pref as IPreferences;
+
+    age.value = getAge(user.value.dob);
+    isUser.value = user.value.id === store.currentUser.id;
+    canEdit.value = isUser.value || preferences.value.allowEdit;
 });
 
 async function addContact() {
@@ -165,7 +171,7 @@ async function addContact() {
 }
 
 async function savePreferences(){
-    await UserService.setPreferences(user.value!.id, preferences.value);
+    await UserService.setPreferences(user.value!.id, preferences.value!);
     showEditPreferences.value = false;
 }
 </script>

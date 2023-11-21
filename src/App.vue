@@ -165,7 +165,7 @@ hr {
         </div>
       </div>
 
-      <hr class="my-3 opacity-40 hidden md:block" />
+      <hr class="my-3 hidden md:block" />
 
       <nav>
         <div class="p-float-label mb-5">
@@ -181,9 +181,12 @@ hr {
           </li>
         </ul>
 
-        <hr class="my-3 opacity-40 hidden md:block" />
+        <hr class="my-3 hidden md:block" />
 
         <ul>
+          <li>
+            <RouterLink :to="{name: 'myProfile'}" class="large">My Details</RouterLink>
+          </li>
           <li>
             <RouterLink to="/" class="large">Sign Out</RouterLink>
           </li>
@@ -194,12 +197,12 @@ hr {
   </header>
 
   <main class="container">
-    <RouterView />
+    <RouterView :key="route.fullPath" />
   </main>
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView, useRouter } from 'vue-router';
+import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router';
 import { ref, computed, watch } from 'vue';
 import { useSessionStore } from './stores/SessionStore';
 import GroupService from './service/GroupService';
@@ -207,6 +210,7 @@ import GroupService from './service/GroupService';
 import Dropdown from 'primevue/dropdown';
 
 const router = useRouter();
+const route = useRoute();
 const store = useSessionStore();
 const loadingGroups = ref(true);
 const id = ref(store.currentGroup?.id);
