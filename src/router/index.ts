@@ -49,7 +49,7 @@ const router = createRouter({
 
         return {
         id: route.params.id,
-        group: store.currentGroup!.id
+        groupId: store.currentGroup!.id
       }
     }
     },
