@@ -67,5 +67,9 @@ export async function patchApi(url: string, payload: any){
 };
 
 export const getApiPath = (endpoint:string) => {
-    return import.meta.env.VITE_API_URL + endpoint
+    if(import.meta.env.DEV){
+        return `${location.protocol}\\\\${location.hostname}:${import.meta.env.VITE_API_PORT}${endpoint}`;
+    }
+
+    return import.meta.env.VITE_API_URL + endpoint;
 };
