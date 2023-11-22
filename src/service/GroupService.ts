@@ -1,7 +1,7 @@
 import type { IGroup } from "../../../bandmaster-common/type/Groups";
 import type { IUser } from "../../../bandmaster-common/type/Users";
-import type {ICreateMemberDto, ICreateGroupDto, IMoveSectionDto} from "../../../bandmaster-common/type/Dto";
-import { dateToString, getFromApi, postToApi } from "@/utils";
+import type {ICreateMemberDto, ICreateGroupDto, IMoveSectionDto, IUpdateUserDto} from "../../../bandmaster-common/type/Dto";
+import { dateToString, getFromApi, postToApi, patchApi } from "@/utils";
 
 const getApiUrl = (endpoint: string = '') => `/groups${endpoint}`;
 
@@ -48,5 +48,10 @@ export default {
             result.dob = new Date(result.dob);
         }
         return result;
-    }
+    },
+
+    async updateUserInGroup(userId: string, groupId: string, params: IUpdateUserDto){
+        const result = await patchApi(getApiUrl(`/${groupId}/members/${userId}`), params);
+        return result;
+    },
 };

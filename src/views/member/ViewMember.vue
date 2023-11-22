@@ -39,6 +39,19 @@
                             <Calendar class="w-full" input-id="dob" v-model="user.dob" :max-date="new Date()" :disabled="true"></Calendar>
                             <label for="dob">Date of Birth</label>
                         </div>
+
+                        <div v-if="groupUser && group">
+                            <hr />
+                            <p>I give consent for <strong>{{ group.name }}</strong> to take photos and videos:</p>
+                            <div class="mb-3 ml-3">
+                                <label for="physicalMedia" class="block">For use in physical media (e.g. programmes, press/news articles, merchandise)</label>
+                                <ImmediateUpdate field-name="physicalMediaConsent" v-model="(user as IGroupUser).consent.physicalMedia" :component="InputSwitch" :no-stretch="true" id="physicalMedia"></ImmediateUpdate>
+                            </div>
+                            <div class="ml-3">
+                                <label for="digitalMedia" class="block">For use in digital media (e.g. social media, websites, online advertising)</label>
+                                <ImmediateUpdate field-name="digitalMediaConsent" v-model="(user as IGroupUser).consent.digitalMedia" :component="InputSwitch" :no-stretch="true" id="digitalMedia"></ImmediateUpdate>
+                            </div>
+                        </div>
                     </template>
                 </Card>
             </div>
@@ -94,6 +107,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import type { IUser, IEmergencyContact, IPreferences } from '../../../../bandmaster-common/type/Users';
+import type { IGroupUser } from '../../../../bandmaster-common/type/Groups';
 import type { IUpdateUserDto } from "../../../../bandmaster-common/type/Dto";
 import type { ILooseObject } from '../../../../bandmaster-common/type/Util';
 
@@ -114,6 +128,7 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import Message from 'primevue/message';
+import InputSwitch from 'primevue/inputswitch';
 
 const props = defineProps<{
     id: string,
@@ -121,8 +136,12 @@ const props = defineProps<{
 }>();
 
 provide("callback", async (params: ILooseObject) => {
-    if(!canEdit.value){
+    if (!canEdit.value) {
         throw new Error("Editing is disabled");
+    }
+
+    if(groupUser){
+        return await GroupService.updateUserInGroup(user.value!.id, props.groupId, params as IUpdateUserDto);
     }
 
     return await UserService.updateUser(user.value!.id, params as IUpdateUserDto);
@@ -130,11 +149,13 @@ provide("callback", async (params: ILooseObject) => {
 
 const store = useSessionStore();
 
-const user: Ref<IUser | null> = ref(null);
+const user: Ref<IUser | IGroupUser | null> = ref(null);
 const preferences: Ref<IPreferences | null> = ref(null);
 const isUser = ref(false);
 const age = ref(100);
 const canEdit = ref(false);
+const groupUser = (props.groupId != null);
+const group = store.groups.find(x => x.id == props.groupId);
 
 const showCreateContact = ref(false);
 const newContact: Ref<IEmergencyContact> = ref({
@@ -147,7 +168,7 @@ const newContact: Ref<IEmergencyContact> = ref({
 const showEditPreferences = ref(false);
 
 const toLoad = [];
-if(props.groupId){
+if (groupUser) {
     toLoad.push(GroupService.getUserInGroupById(props.groupId, props.id));
 } else {
     toLoad.push(UserService.getById(props.id));
@@ -156,7 +177,11 @@ if(props.groupId){
 toLoad.push(UserService.getPreferences(props.id))
 
 Promise.all(toLoad).then(([m, pref]) => {
-    user.value = m as IUser;
+    if (groupUser) {
+        user.value = m as IGroupUser;
+    } else {
+        user.value = m as IUser;
+    }
     preferences.value = pref as IPreferences;
 
     age.value = getAge(user.value.dob);
@@ -170,7 +195,7 @@ async function addContact() {
     showCreateContact.value = false;
 }
 
-async function savePreferences(){
+async function savePreferences() {
     await UserService.setPreferences(user.value!.id, preferences.value!);
     showEditPreferences.value = false;
 }
