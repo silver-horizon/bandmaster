@@ -19,39 +19,7 @@
             <div class="mb-3">
                 <Card class="h-full">
                     <template #content>
-                        <h3 class="text-center">Member Details</h3>
-                        <div class="row row-cols-1 row-cols-lg-2">
-                            <div>
-                                <ImmediateUpdate label="First Name" field-name="firstName" v-model="user.firstName" :props="{ disabled: !canEdit }"></ImmediateUpdate>
-                            </div>
-
-                            <div>
-                                <ImmediateUpdate label="Last Name" field-name="lastName" v-model="user.lastName" :props="{ disabled: !canEdit }"></ImmediateUpdate>
-                            </div>
-                        </div>
-
-                        <div class="p-float-label mb-3">
-                            <InputText type="email" class="w-full" id="email" v-model="user.email" :disabled="true"></InputText>
-                            <label for="email">Email</label>
-                        </div>
-
-                        <div class="p-float-label mb-3">
-                            <Calendar class="w-full" input-id="dob" v-model="user.dob" :max-date="new Date()" :disabled="true"></Calendar>
-                            <label for="dob">Date of Birth</label>
-                        </div>
-
-                        <div v-if="groupUser && group">
-                            <hr />
-                            <p>I give consent for <strong>{{ group.name }}</strong> to take photos and videos:</p>
-                            <div class="mb-3 ml-3">
-                                <label for="physicalMedia" class="block">For use in physical media (e.g. programmes, press/news articles, merchandise)</label>
-                                <ImmediateUpdate field-name="physicalMediaConsent" v-model="(user as IGroupUser).consent.physicalMedia" :component="InputSwitch" :no-stretch="true" id="physicalMedia"></ImmediateUpdate>
-                            </div>
-                            <div class="ml-3">
-                                <label for="digitalMedia" class="block">For use in digital media (e.g. social media, websites, online advertising)</label>
-                                <ImmediateUpdate field-name="digitalMediaConsent" v-model="(user as IGroupUser).consent.digitalMedia" :component="InputSwitch" :no-stretch="true" id="digitalMedia"></ImmediateUpdate>
-                            </div>
-                        </div>
+                        <MemberDetails v-model="user" :can-edit="canEdit" :group-id="props.groupId"></MemberDetails>
                     </template>
                 </Card>
             </div>
@@ -59,32 +27,7 @@
             <div class="mb-3">
                 <Card class="h-full" :class="{ 'center': !user.contact }">
                     <template #content>
-                        <h3 class="text-center">Emergency Contact Details</h3>
-                        <div v-if="user.contact">
-                            <div class="row row-cols-1 row-cols-lg-2">
-                                <div>
-                                    <ImmediateUpdate label="First Name" field-name="contactFirstName" v-model="user.contact.firstName" :props="{ disabled: !canEdit }"></ImmediateUpdate>
-                                </div>
-
-                                <div>
-                                    <ImmediateUpdate label="Last Name" field-name="contactLastName" v-model="user.contact.lastName" :props="{ disabled: !canEdit }"></ImmediateUpdate>
-                                </div>
-                            </div>
-
-                            <ImmediateUpdate label="Email" field-name="contactEmail" v-model="user.contact.email" :props="{ disabled: !canEdit, type: 'email' }"></ImmediateUpdate>
-                            <ImmediateUpdate label="Phone" field-name="contactPhone" v-model="user.contact.phone" :props="{ disabled: !canEdit, maxLength: 15 }"></ImmediateUpdate>
-                        </div>
-
-                        <div v-else class="text-center">
-                            <p>None recorded.</p>
-                            <Button v-if="canEdit" @click="showCreateContact = true">+ Add</Button>
-
-                            <Dialog v-model:visible="showCreateContact" modal header="Add Emergency Contact">
-                                <Form :unstyled="true" @submit="addContact">
-                                    <CreateEmergencyContact v-model="newContact"></CreateEmergencyContact>
-                                </Form>
-                            </Dialog>
-                        </div>
+                        <EmergencyContact v-model="user.contact" :can-edit="canEdit" @createContact="addContact"></EmergencyContact>
                     </template>
                 </Card>
             </div>
@@ -92,13 +35,7 @@
 
         <Card class="h-full">
             <template #content>
-                <h3 class="text-center">Medical Details</h3>
-                <div class="flex flex-column">
-                    <ImmediateUpdate v-model="user.medical.doctor" label="Doctor's Name" field-name="doctorName" :props="{ disabled: !canEdit }"></ImmediateUpdate>
-                    <ImmediateUpdate v-model="user.medical.doctorAddress" label="Doctor's Address" field-name="doctorAddress" :component="Textarea" :props="{ disabled: !canEdit }"></ImmediateUpdate>
-                    <ImmediateUpdate v-model="user.medical.allergies" label="Allergies" field-name="allergies" :component="Textarea" :props="{ disabled: !canEdit }"></ImmediateUpdate>
-                    <ImmediateUpdate v-model="user.medical.medicalDetails" label="Other Medical Details" field-name="medicalDetails" :component="Textarea" :props="{ disabled: !canEdit }"></ImmediateUpdate>
-                </div>
+                <MedicalDetails v-model="user.medical" :can-edit="canEdit"></MedicalDetails>
             </template>
         </Card>
     </div>
@@ -106,7 +43,7 @@
 
 <script setup lang="ts">
 import type { Ref } from 'vue';
-import type { IUser, IEmergencyContact, IPreferences } from '../../../../bandmaster-common/type/Users';
+import type { IUser, IPreferences, IEmergencyContact } from '../../../../bandmaster-common/type/Users';
 import type { IGroupUser } from '../../../../bandmaster-common/type/Groups';
 import type { IUpdateUserDto } from "../../../../bandmaster-common/type/Dto";
 import type { ILooseObject } from '../../../../bandmaster-common/type/Util';
@@ -117,18 +54,16 @@ import UserService from '@/service/UserService';
 import { useSessionStore } from '@/stores/SessionStore';
 import { getAge } from "@/utils"
 
+import MemberDetails from "../../components/ViewMember/MemberDetails.vue";
+import EmergencyContact from "../../components/ViewMember/EmergencyContact.vue";
+import MedicalDetails from "../../components/ViewMember/MedicalDetails.vue";
+
 import Form from '@/components/Form.vue';
-import ImmediateUpdate from '@/components/ImmediateUpdate.vue';
-import CreateEmergencyContact from '@/components/popup/CreateEmergencyContact.vue';
 import EditSettings from "@/components/popup/EditSettings.vue";
-import InputText from 'primevue/inputtext';
-import Calendar from 'primevue/calendar';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
-import Textarea from 'primevue/textarea';
 import Message from 'primevue/message';
-import InputSwitch from 'primevue/inputswitch';
 
 const props = defineProps<{
     id: string,
@@ -155,15 +90,6 @@ const isUser = ref(false);
 const age = ref(100);
 const canEdit = ref(false);
 const groupUser = (props.groupId != null);
-const group = store.groups.find(x => x.id == props.groupId);
-
-const showCreateContact = ref(false);
-const newContact: Ref<IEmergencyContact> = ref({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: ""
-});
 
 const showEditPreferences = ref(false);
 
@@ -189,14 +115,13 @@ Promise.all(toLoad).then(([m, pref]) => {
     canEdit.value = isUser.value || preferences.value.allowEdit;
 });
 
-async function addContact() {
-    const result = await UserService.setContact(user.value!.id, { ...newContact.value });
-    user.value!.contact = result.contact;
-    showCreateContact.value = false;
-}
-
 async function savePreferences() {
     await UserService.setPreferences(user.value!.id, preferences.value!);
     showEditPreferences.value = false;
+}
+
+async function addContact(newContact: IEmergencyContact){
+    const result = await UserService.setContact(props.id, { ...newContact });
+    user.value!.contact = result.contact;
 }
 </script>
