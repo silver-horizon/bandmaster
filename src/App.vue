@@ -97,11 +97,6 @@ ul {
   padding-left: 0;
 }
 
-hr {
-  min-width: 100%;
-  min-height: 2px;
-}
-
 @media screen and (min-width: 768px) {
   header {
     width: 300px;
@@ -165,7 +160,7 @@ hr {
         </div>
       </div>
 
-      <hr class="my-3 hidden md:block" />
+      <hr class="hidden md:block" />
 
       <nav>
         <div class="p-float-label mb-5">
@@ -181,7 +176,7 @@ hr {
           </li>
         </ul>
 
-        <hr class="my-3 hidden md:block" />
+        <hr class="hidden md:block" />
 
         <ul>
           <li>

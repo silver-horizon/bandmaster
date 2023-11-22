@@ -2,12 +2,12 @@ body.nav-open {
     overflow: hidden;
 }
 
-main{
+main {
     opacity: 1;
     transition: opacity 1s ease-in-out;
 }
 
-.nav-open main{
+.nav-open main {
     opacity: 0;
 }
 
@@ -15,21 +15,26 @@ button {
     position: static;
 }
 
-.handle{
+.handle {
     cursor: pointer;
 }
 
-.invalid *, .error{
+.invalid *,
+.error {
     color: var(--red-500);
     border-color: var(--red-500);
 }
 
-.success *{
+.success * {
     color: var(--green-500);
     border-color: var(--green-500);
 }
 
-hr{
+hr {
     opacity: 0.5;
     border-radius: 100%;
+    min-width: 100%;
+    min-height: 2px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
