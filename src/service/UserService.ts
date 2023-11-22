@@ -1,4 +1,5 @@
 import type { IUser, IPreferences, IAccount } from "../../../bandmaster-common/type/Users";
+import type { IGroupSummary } from "../../../bandmaster-common/type/Groups";
 import type { IEmergencyContactDto, IUpdateUserDto } from "@/type/Dto";
 
 import { getFromApi, patchApi, postToApi } from "@/utils";
@@ -35,5 +36,9 @@ export default {
 
     async setPreferences(id: string, preferences: IPreferences){
         return await postToApi(getApiUrl(`/${id}/settings`), preferences);
+    },
+
+    async getGroups(id: string): Promise<IGroupSummary[]>{
+        return await getFromApi(getApiUrl(`/${id}/groups`));
     }
 };

@@ -40,10 +40,20 @@
                 </Card>
             </div>
 
-            <div class="mb-3" v-if="group">
+            <div class="mb-3">
                 <Card class="h-full">
                     <template #content>
-                        <Consent v-model="(user as IGroupUser).consent" :group-name="group.name" :can-edit="canEdit"></Consent>
+                        <Consent v-model="(user as IGroupUser).consent" :group-name="group.name" :can-edit="canEdit" v-if="group"></Consent>
+
+                        <div v-else>
+                            <h3 class="mb-6">My Groups</h3>
+
+                            <Card class="list-item" v-for="group in userGroups">
+                                <template #content>
+                                    {{ group.name }}
+                                </template>
+                            </Card>
+                        </div>
                     </template>
                 </Card>
             </div>
@@ -54,7 +64,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import type { IUser, IPreferences, IEmergencyContact } from '../../../../bandmaster-common/type/Users';
-import type { IGroupUser } from '../../../../bandmaster-common/type/Groups';
+import type { IGroupUser, IGroupSummary } from '../../../../bandmaster-common/type/Groups';
 import type { IUpdateUserDto } from "../../../../bandmaster-common/type/Dto";
 import type { ILooseObject } from '../../../../bandmaster-common/type/Util';
 
@@ -102,19 +112,20 @@ const age = ref(100);
 const canEdit = ref(false);
 const groupUser = (props.groupId != null);
 const group = store.groups.find(x => x.id == props.groupId);
+const userGroups: Ref<IGroupSummary[]> = ref([]);
 
 const showEditPreferences = ref(false);
 
 const toLoad = [];
 if (groupUser) {
-    toLoad.push(GroupService.getUserInGroupById(props.groupId, props.id));
+    toLoad.push(GroupService.getUserInGroupById(props.groupId, props.id), []);
 } else {
-    toLoad.push(UserService.getById(props.id));
+    toLoad.push(UserService.getById(props.id), UserService.getGroups(props.id));
 }
 
-toLoad.push(UserService.getPreferences(props.id))
+toLoad.push(UserService.getPreferences(props.id));
 
-Promise.all(toLoad).then(([m, pref]) => {
+Promise.all(toLoad).then(([m, groups, pref]) => {
     if (groupUser) {
         user.value = m as IGroupUser;
     } else {
@@ -125,6 +136,8 @@ Promise.all(toLoad).then(([m, pref]) => {
     age.value = getAge(user.value.dob);
     isUser.value = user.value.id === store.currentUser.id;
     canEdit.value = isUser.value || preferences.value.allowEdit;
+
+    userGroups.value = groups as IGroupSummary[];
 });
 
 async function savePreferences() {
