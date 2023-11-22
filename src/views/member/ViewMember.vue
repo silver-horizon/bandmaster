@@ -19,7 +19,7 @@
             <div class="mb-3">
                 <Card class="h-full">
                     <template #content>
-                        <MemberDetails v-model="user" :can-edit="canEdit" :group-id="props.groupId"></MemberDetails>
+                        <MemberDetails v-model="user" :can-edit="canEdit"></MemberDetails>
                     </template>
                 </Card>
             </div>
@@ -31,13 +31,23 @@
                     </template>
                 </Card>
             </div>
-        </div>
 
-        <Card class="h-full">
-            <template #content>
-                <MedicalDetails v-model="user.medical" :can-edit="canEdit"></MedicalDetails>
-            </template>
-        </Card>
+            <div class="mb-3">
+                <Card class="h-full">
+                    <template #content>
+                        <MedicalDetails v-model="user.medical" :can-edit="canEdit"></MedicalDetails>
+                    </template>
+                </Card>
+            </div>
+
+            <div class="mb-3" v-if="group">
+                <Card class="h-full">
+                    <template #content>
+                        <Consent v-model="(user as IGroupUser).consent" :group-name="group.name"></Consent>
+                    </template>
+                </Card>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -57,9 +67,10 @@ import { getAge } from "@/utils"
 import MemberDetails from "../../components/ViewMember/MemberDetails.vue";
 import EmergencyContact from "../../components/ViewMember/EmergencyContact.vue";
 import MedicalDetails from "../../components/ViewMember/MedicalDetails.vue";
+import Consent from '@/components/ViewMember/Consent.vue';
+import EditSettings from "@/components/popup/EditSettings.vue";
 
 import Form from '@/components/Form.vue';
-import EditSettings from "@/components/popup/EditSettings.vue";
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
@@ -75,7 +86,7 @@ provide("callback", async (params: ILooseObject) => {
         throw new Error("Editing is disabled");
     }
 
-    if(groupUser){
+    if (groupUser) {
         return await GroupService.updateUserInGroup(user.value!.id, props.groupId, params as IUpdateUserDto);
     }
 
@@ -90,6 +101,7 @@ const isUser = ref(false);
 const age = ref(100);
 const canEdit = ref(false);
 const groupUser = (props.groupId != null);
+const group = store.groups.find(x => x.id == props.groupId);
 
 const showEditPreferences = ref(false);
 
@@ -120,7 +132,7 @@ async function savePreferences() {
     showEditPreferences.value = false;
 }
 
-async function addContact(newContact: IEmergencyContact){
+async function addContact(newContact: IEmergencyContact) {
     const result = await UserService.setContact(props.id, { ...newContact });
     user.value!.contact = result.contact;
 }
