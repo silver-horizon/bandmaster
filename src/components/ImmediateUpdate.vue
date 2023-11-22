@@ -1,9 +1,9 @@
 <template>
-    <div class="p-float-label" :class="{ 'p-input-icon-right': saving || updated, 'invalid': error, 'success': updated && !error }">
+    <div :class="{ 'p-input-icon-right': saving || updated, 'invalid': error, 'success': updated && !error, 'p-float-label': label }">
         <i class="pi pi-spin pi-spinner" v-if="saving"></i>
         <i class="pi pi-check text-green-300" v-if="updated && !saving"></i>
-        <component :is="component" class="w-full" :id="inputId" v-model="inputValue" @keydown="save" v-bind="props.props" :required="!allowEmpty"></component>
-        <label :for="inputId">{{ label }}</label>
+        <component :is="component" :class="{'w-full': !noStretch}" :id="inputId" v-model="inputValue" @change="save" @keydown="save" v-bind="props.props" :required="!allowEmpty"></component>
+        <label :for="inputId" v-if="label">{{ label }}</label>
     </div>
     <small class="error">{{ error }}</small>
 </template>
@@ -22,13 +22,15 @@ interface ICheckable{
 };
 
 const props = defineProps<{
-    modelValue: string | undefined,
-    label: string,
+    modelValue: string | boolean | undefined,
+    label?: string,
     component?: any,
     fieldName: string,
     timeout?: number,
     props?: any,
-    allowEmpty?: boolean
+    allowEmpty?: boolean,
+    noStretch?: boolean,
+    id?: string
 }>();
 const emit = defineEmits(['update:modelValue']);
 const callback = inject<(v: ILooseObject) => Promise<boolean>>('callback')!;
@@ -37,7 +39,7 @@ const saving = ref(false);
 const updated = ref(false);
 const error: Ref<string | null> = ref(null);
 const component = props.component ?? InputText;
-const inputId = crypto.randomUUID();
+const inputId = props.id ?? crypto.randomUUID();
 
 let originalValue = props.modelValue;
 
