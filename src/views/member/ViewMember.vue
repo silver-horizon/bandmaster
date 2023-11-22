@@ -43,7 +43,7 @@
             <div class="mb-3" v-if="group">
                 <Card class="h-full">
                     <template #content>
-                        <Consent v-model="(user as IGroupUser).consent" :group-name="group.name"></Consent>
+                        <Consent v-model="(user as IGroupUser).consent" :group-name="group.name" :can-edit="canEdit"></Consent>
                     </template>
                 </Card>
             </div>
