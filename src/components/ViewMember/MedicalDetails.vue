@@ -1,5 +1,5 @@
 <template>
-    <h3 class="text-center">Medical Details</h3>
+    <h3>Medical Details</h3>
     <div class="flex flex-column">
         <ImmediateUpdate v-model="medical.doctor" label="Doctor's Name" field-name="doctorName" :props="{ disabled: !props.canEdit }"></ImmediateUpdate>
         <ImmediateUpdate v-model="medical.doctorAddress" label="Doctor's Address" field-name="doctorAddress" :component="Textarea" :props="{ disabled: !props.canEdit }"></ImmediateUpdate>

@@ -1,5 +1,5 @@
 <template>
-    <h3 class="text-center">Emergency Contact Details</h3>
+    <h3>Emergency Contact Details</h3>
     <div v-if="contact">
         <div class="row row-cols-1 row-cols-lg-2">
             <div>
