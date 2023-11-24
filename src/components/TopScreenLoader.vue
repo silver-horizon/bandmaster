@@ -1,6 +1,6 @@
 <style scoped>
 .top-screen-loader{
-    position: absolute;
+    position: fixed;
     top: 0;
     height: 3px;
     left: 0;

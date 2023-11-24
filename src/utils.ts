@@ -1,4 +1,5 @@
-import type {ProgressCallback} from "@/type/callback";
+import type { ProgressCallback } from "@/type/callback";
+import { useSessionStore } from "./stores/SessionStore";
 
 export const debounce = (fn: (...args: any[]) => void, wait: number) => {
     let timer: number | undefined;
@@ -13,44 +14,47 @@ export const debounce = (fn: (...args: any[]) => void, wait: number) => {
     }
 }
 
-export function dateToString(date: Date){
+export function dateToString(date: Date) {
     const offset = date.getTimezoneOffset() * 60 * 1000;
     const adjustedDate = new Date(date.getTime() - offset);
     return adjustedDate.toISOString().split('T')[0];
 }
 
-export function getAge(dob: Date){
+export function getAge(dob: Date) {
     const today = new Date();
     const timeDiff = today.getTime() - dob.getTime();
     const days = timeDiff / (1000 * 60 * 60 * 24);
     return Math.floor(days / 365.25);
 }
 
-export async function fetchWithCallback(url: string, progressCallback: ProgressCallback, options?: any){
+export async function fetchWithCallback(url: string, progressCallback: ProgressCallback, options?: any) {
     const response = await fetch(url, options);
 
     const reader = response.body!.getReader();
     const chunks = [];
     let received = 0;
     const maxLength = parseInt(response.headers.get('Content-Length') ?? '0');
+    
+    const initialProgress = 100;
+    progressCallback(initialProgress, maxLength + initialProgress);
 
-    while(true){
-        const {done, value} =   await reader.read();
+    while (true) {
+        const { done, value } = await reader.read();
 
-        if(done){
+        if (done) {
             break;
         }
 
         chunks.push(value);
         received += value.length;
 
-        progressCallback(received, maxLength);
+        progressCallback(received + initialProgress, maxLength + initialProgress);
     }
 
     const allChunks = new Uint8Array(received);
     let position = 0;
 
-    for(const chunk of chunks){
+    for (const chunk of chunks) {
         allChunks.set(chunk, position);
         position += chunk.length;
     }
@@ -58,17 +62,17 @@ export async function fetchWithCallback(url: string, progressCallback: ProgressC
     return JSON.parse(new TextDecoder("utf-8").decode(allChunks));
 }
 
-export async function getFromApi(url: string, progressCallback: ProgressCallback = (a,b) => null){
+export async function getFromApi(url: string, progressCallback: ProgressCallback = defaultProgressCallback) {
     const result = await fetchWithCallback(getApiPath(url), progressCallback);
 
-    if(!result.success){
+    if (!result.success) {
         throw new Error(result.errors.join(", "));
     }
 
     return result.data;
 }
 
-export async function postToApi(url: string, payload: any){
+export async function postToApi(url: string, payload: any) {
     const result = await fetch(getApiPath(url), {
         method: 'POST',
         headers: {
@@ -77,14 +81,14 @@ export async function postToApi(url: string, payload: any){
         body: JSON.stringify(payload)
     }).then(res => res.json());
 
-    if(!result.success){
+    if (!result.success) {
         throw new Error(result.errors.join(", "));
     }
 
     return result.data;
 };
 
-export async function patchApi(url: string, payload: any){
+export async function patchApi(url: string, payload: any) {
     const result = await fetch(getApiPath(url), {
         method: 'PATCH',
         headers: {
@@ -93,15 +97,15 @@ export async function patchApi(url: string, payload: any){
         body: JSON.stringify(payload)
     }).then(res => res.json());
 
-    if(!result.success){
+    if (!result.success) {
         throw new Error(result.errors.join(", "));
     }
 
     return result.data;
 };
 
-export const getApiPath = (endpoint:string) => {
-    if(import.meta.env.DEV){
+export const getApiPath = (endpoint: string) => {
+    if (import.meta.env.DEV) {
         return `${location.protocol}\\\\${location.hostname}:${import.meta.env.VITE_API_PORT}${endpoint}`;
     }
 
@@ -110,10 +114,18 @@ export const getApiPath = (endpoint:string) => {
 
 export const setTitle = (title: string | null) => {
     const defaultTitle = "Bandmaster";
-    if(!title){
+    if (!title) {
         document.title = defaultTitle;
         return;
     }
 
     document.title = `${title} | ${defaultTitle}`;
+}
+
+function defaultProgressCallback(progress: number, total: number) {
+    const store = useSessionStore();
+    const prog = progress / total;
+
+    store.backgroundLoader.visible = prog < 1;
+    store.backgroundLoader.progress = prog;
 }
