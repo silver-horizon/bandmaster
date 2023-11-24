@@ -1,3 +1,5 @@
+import type {ProgressCallback} from "@/type/callback";
+
 export const debounce = (fn: (...args: any[]) => void, wait: number) => {
     let timer: number | undefined;
     return (...args: any[]) => {
@@ -24,8 +26,39 @@ export function getAge(dob: Date){
     return Math.floor(days / 365.25);
 }
 
-export async function getFromApi(url: string){
-    const result = await fetch(getApiPath(url)).then(res => res.json());
+export async function fetchWithCallback(url: string, progressCallback: ProgressCallback, options?: any){
+    const response = await fetch(url, options);
+
+    const reader = response.body!.getReader();
+    const chunks = [];
+    let received = 0;
+
+    while(true){
+        const {done, value} =   await reader.read();
+
+        if(done){
+            break;
+        }
+
+        chunks.push(value);
+        received += value.length;
+
+        progressCallback(received, 0);
+    }
+
+    const allChunks = new Uint8Array(received);
+    let position = 0;
+
+    for(const chunk of chunks){
+        allChunks.set(chunk, position);
+        position += chunk.length;
+    }
+
+    return JSON.parse(new TextDecoder("utf-8").decode(allChunks));
+}
+
+export async function getFromApi(url: string, progressCallback: ProgressCallback = (a,b) => null){
+    const result = await fetchWithCallback(getApiPath(url), progressCallback);
 
     if(!result.success){
         throw new Error(result.errors.join(", "));
