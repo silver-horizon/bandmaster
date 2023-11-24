@@ -165,7 +165,7 @@ ul {
 
       <nav>
         <div class="p-float-label mb-5">
-          <Dropdown class="w-full" :options="availableGroups" option-label="name" option-value="id" v-model="id" :loading="loadingGroups" :disabled="loadingGroups" @change="changeGroup"></Dropdown>
+          <Dropdown class="w-full" :options="availableGroups" option-label="name" option-value="id" v-model="id" @change="changeGroup"></Dropdown>
           <label>Group</label>
         </div>
         <ul class="mb-auto">
@@ -201,14 +201,12 @@ ul {
 import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router';
 import { ref, computed, watch } from 'vue';
 import { useSessionStore } from './stores/SessionStore';
-import GroupService from './service/GroupService';
 
 import Dropdown from 'primevue/dropdown';
 
 const router = useRouter();
 const route = useRoute();
 const store = useSessionStore();
-const loadingGroups = ref(true);
 const id = ref(store.currentGroup?.id);
 
 watch(() => store.currentGroup, () => {
@@ -221,16 +219,6 @@ const availableGroups = computed(() => {
     name: "+ Add",
     sections: []
   }])
-});
-
-GroupService.getGroups().then(g => {
-  store.groups = g;
-  if (!store.currentGroup) {
-    store.currentGroup = g[0];
-    id.value = g[0].id;
-  }
-
-  loadingGroups.value = false;
 });
 
 const isNavOpen = ref(false);

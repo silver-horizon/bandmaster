@@ -11,13 +11,26 @@ import PrimeVue from 'primevue/config';
 
 import App from './App.vue';
 import router from './router';
+import {useSessionStore} from '@/stores/SessionStore';
+import GroupService from './service/GroupService';
+
+async function initialise(){
+    const store = useSessionStore();
+
+    store.groups = await GroupService.getGroups();
+    if(store.groups.length > 0){
+        store.currentGroup = store.groups[0];
+    }
+
+    document.getElementById("loading")?.remove();
+    app.mount('#app');
+}
 
 const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
 app.use(PrimeVue);
-
 app.config.globalProperties.window = window;
 
-app.mount('#app');
+initialise();

@@ -2,12 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" id="loading" href="/loading.css" />
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bandmaster</title>
   </head>
   <body>
-    <div id="app" class="container-fluid"></div>
+    <div id="app" class="container-fluid">
+      <div class="splash-loader">
+        <div class="lds-dual-ring"></div>
+        <p>Loading...</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
