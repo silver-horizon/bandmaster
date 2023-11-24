@@ -31,6 +31,8 @@ import { computed } from 'vue';
 import GroupService from '@/service/GroupService';
 import { useSessionStore } from '@/stores/SessionStore';
 
+import { setTitle } from '@/utils';
+
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import { RouterLink } from 'vue-router';
@@ -41,13 +43,14 @@ const members = computed(() => store.currentGroup?.sections.flatMap(s => s.membe
 }))));
 
 const store = useSessionStore();
-let prevGroup = store.currentGroup?.id;
+let prevGroup: string | undefined = undefined;
 store.$subscribe(() => {
+    setTitle(`${store.currentGroup!.name}'s Members`);
     if(store.currentGroup?.id != prevGroup){
         updateMembers();
         prevGroup = store.currentGroup?.id;
     }
-});
+}, {immediate: true});
 
 function updateMembers() {
     if (!store.currentGroup) {
@@ -55,9 +58,5 @@ function updateMembers() {
     }
 
     GroupService.getGroup(store.currentGroup.id).then(g => store.currentGroup = g);
-}
-
-if (store.currentGroup) {
-    updateMembers();
 }
 </script>

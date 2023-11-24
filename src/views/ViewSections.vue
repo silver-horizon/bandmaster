@@ -33,6 +33,7 @@ import Badge from 'primevue/badge';
 import { RouterLink } from 'vue-router';
 
 import draggable from 'vuedraggable';
+import { setTitle } from '@/utils';
 
 type AddedEvent = {added: {newIndex: number, element: any}};
 
@@ -45,13 +46,15 @@ async function changeSection(e: AddedEvent, sectionId: string){
 }
 
 const store = useSessionStore();
-let prevGroup = store.currentGroup?.id;
+let prevGroup: string | undefined = undefined;
 store.$subscribe(() => {
     if(store.currentGroup?.id != prevGroup){
         updateMembers();
         prevGroup = store.currentGroup?.id;
+
+        setTitle(`Sections of ${store.currentGroup!.name}`);
     }
-});
+}, {immediate: true});
 
 function updateMembers() {
     if (!store.currentGroup) {
@@ -59,9 +62,5 @@ function updateMembers() {
     }
 
     GroupService.getGroup(store.currentGroup.id).then(g => store.currentGroup = g);
-}
-
-if (store.currentGroup) {
-    updateMembers();
 }
 </script>

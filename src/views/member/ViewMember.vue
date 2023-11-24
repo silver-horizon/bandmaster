@@ -63,8 +63,7 @@ import { ref, provide } from 'vue';
 import GroupService from '@/service/GroupService';
 import UserService from '@/service/UserService';
 import { useSessionStore } from '@/stores/SessionStore';
-import { getAge } from "@/utils"
-import { useRouter } from 'vue-router';
+import { getAge, setTitle } from "@/utils";
 
 import MemberDetails from "../../components/ViewMember/MemberDetails.vue";
 import EmergencyContact from "../../components/ViewMember/EmergencyContact.vue";
@@ -78,7 +77,6 @@ import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Message from 'primevue/message';
-import { watch } from 'vue';
 
 const props = defineProps<{
     id: string,
@@ -98,7 +96,6 @@ provide("callback", async (params: ILooseObject) => {
 });
 
 const store = useSessionStore();
-const router = useRouter();
 
 const user: Ref<IUser | IGroupUser | null> = ref(null);
 const preferences: Ref<IPreferences | null> = ref(null);
@@ -142,6 +139,8 @@ Promise.all(toLoad).then(([m, groups, pref]) => {
     canEdit.value = isUser.value || preferences.value.allowEdit;
 
     userGroups.value = groups as IGroupSummary[];
+
+    setTitle(`${user.value.firstName} ${user.value.lastName}'s Profile`);
 });
 
 async function savePreferences() {

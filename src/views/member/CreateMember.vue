@@ -80,7 +80,7 @@ import type { IEmergencyContact, IUser } from '../../../../bandmaster-common/typ
 import { useSessionStore } from '@/stores/SessionStore';
 import { useRouter } from 'vue-router';
 
-import { debounce, getAge } from '../../utils';
+import { debounce, getAge, setTitle } from '../../utils';
 import UserService from "../../service/UserService";
 import GroupService from "../../service/GroupService";
 
@@ -248,4 +248,8 @@ const age = computed(() => {
 
     return getAge(user.value.dob);
 });
+
+store.$subscribe(() => {
+    setTitle(`Add user to ${store.currentGroup!.name}`);
+}, {immediate: true});
 </script>
