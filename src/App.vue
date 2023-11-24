@@ -126,15 +126,16 @@ ul {
     content: '';
     position: absolute;
     bottom: 0;
-    left: 0;
+    left: -1px;
     width: 100%;
-    height: 0.1em;
+    height: 0.1rem;
     background-color: var(--primary-color-text);
-    transition: opacity 300ms, transform 300ms;
+    transition: transform .3s;
     transform: translate3d(-100%, 0, 0);
   }
 
   a:hover::after {
+    left: 0px;
     transform: translate3d(0, 0, 0);
   }
 }
