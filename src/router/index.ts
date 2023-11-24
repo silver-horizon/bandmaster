@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import {useSessionStore} from "../stores/SessionStore";
+import { setTitle } from '@/utils';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,14 +9,20 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('@/views/HomeView.vue')
+      component: () => import('@/views/HomeView.vue'),
+      meta: {
+        title: "Home"
+      }
     },
 
     //groups
     {
       path: '/groups/add',
       name: 'addGroup',
-      component: () => import("@/views/AddGroup.vue")
+      component: () => import("@/views/AddGroup.vue"),
+      meta: {
+        title: "Create Group"
+      }
     },
 
     //member
@@ -38,6 +45,8 @@ const router = createRouter({
         return {
           id: store.currentUser.id
         };
+      },meta: {
+        title: "My Profile"
       }
     },
     {
@@ -62,5 +71,12 @@ const router = createRouter({
     }
   ]
 });
+
+router.beforeEach(() => setTitle("Loading..."));
+router.afterEach((to) => {
+  if(to.meta.title){
+    setTitle(to.meta.title as string);
+  }
+})
 
 export default router;

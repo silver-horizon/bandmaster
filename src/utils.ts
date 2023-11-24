@@ -73,3 +73,13 @@ export const getApiPath = (endpoint:string) => {
 
     return import.meta.env.VITE_API_URL + endpoint;
 };
+
+export const setTitle = (title: string | null) => {
+    const defaultTitle = "Bandmaster";
+    if(!title){
+        document.title = defaultTitle;
+        return;
+    }
+
+    document.title = `${title} | ${defaultTitle}`;
+}
