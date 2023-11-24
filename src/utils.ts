@@ -32,6 +32,7 @@ export async function fetchWithCallback(url: string, progressCallback: ProgressC
     const reader = response.body!.getReader();
     const chunks = [];
     let received = 0;
+    const maxLength = parseInt(response.headers.get('Content-Length') ?? '0');
 
     while(true){
         const {done, value} =   await reader.read();
@@ -43,7 +44,7 @@ export async function fetchWithCallback(url: string, progressCallback: ProgressC
         chunks.push(value);
         received += value.length;
 
-        progressCallback(received, 0);
+        progressCallback(received, maxLength);
     }
 
     const allChunks = new Uint8Array(received);

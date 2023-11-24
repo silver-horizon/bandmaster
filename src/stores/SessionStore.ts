@@ -11,5 +11,10 @@ export const useSessionStore = defineStore('session', () => {
     id: import.meta.env.VITE_USER_ID
   });
 
-  return {groups, currentGroup, currentUser};
+  const backgroundLoader = {
+    visible: ref(false),
+    progress: ref(0)
+  };
+
+  return {groups, currentGroup, currentUser, backgroundLoader};
 });

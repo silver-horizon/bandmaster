@@ -13,6 +13,7 @@ import App from './App.vue';
 import router from './router';
 import {useSessionStore} from '@/stores/SessionStore';
 import GroupService from './service/GroupService';
+import HeartbeatService from './service/HeartbeatService';
 
 async function initialise(){
     const store = useSessionStore();
@@ -21,6 +22,8 @@ async function initialise(){
     if(store.groups.length > 0){
         store.currentGroup = store.groups[0];
     }
+
+    HeartbeatService.start();
 
     document.getElementById("loading")?.remove();
     app.mount('#app');
