@@ -44,16 +44,7 @@
                 <Card class="h-full">
                     <template #content>
                         <Consent v-model="(user as IGroupUser).consent" :group-name="group.name" :can-edit="canEdit" v-if="group"></Consent>
-
-                        <div v-else>
-                            <h3 class="mb-6">My Groups</h3>
-
-                            <Card class="list-item" v-for="group in userGroups">
-                                <template #content>
-                                    {{ group.name }}
-                                </template>
-                            </Card>
-                        </div>
+                        <MyGroups :groups="userGroups" :user-id="user?.id" v-else></MyGroups>
                     </template>
                 </Card>
             </div>
@@ -65,7 +56,7 @@
 import type { Ref } from 'vue';
 import type { IUser, IPreferences, IEmergencyContact } from '../../../../bandmaster-common/type/Users';
 import type { IGroupUser, IGroupSummary } from '../../../../bandmaster-common/type/Groups';
-import type { IUpdateUserDto } from "../../../../bandmaster-common/type/Dto";
+import type { IUpdateUserDto, IUpdateGroupUserDto } from "../../../../bandmaster-common/type/Dto";
 import type { ILooseObject } from '../../../../bandmaster-common/type/Util';
 
 import { ref, provide } from 'vue';
@@ -78,6 +69,7 @@ import MemberDetails from "../../components/ViewMember/MemberDetails.vue";
 import EmergencyContact from "../../components/ViewMember/EmergencyContact.vue";
 import MedicalDetails from "../../components/ViewMember/MedicalDetails.vue";
 import Consent from '@/components/ViewMember/Consent.vue';
+import MyGroups from "@/components/ViewMember/MyGroups.vue";
 import EditSettings from "@/components/popup/EditSettings.vue";
 
 import Form from '@/components/Form.vue';
@@ -97,7 +89,7 @@ provide("callback", async (params: ILooseObject) => {
     }
 
     if (groupUser) {
-        return await GroupService.updateUserInGroup(user.value!.id, props.groupId, params as IUpdateUserDto);
+        return await GroupService.updateUserInGroup(user.value!.id, props.groupId, params as IUpdateGroupUserDto);
     }
 
     return await UserService.updateUser(user.value!.id, params as IUpdateUserDto);

@@ -1,6 +1,6 @@
-import type { IGroup } from "../../../bandmaster-common/type/Groups";
+import type { IGroup, IGroupUser } from "../../../bandmaster-common/type/Groups";
 import type { IUser } from "../../../bandmaster-common/type/Users";
-import type {ICreateMemberDto, ICreateGroupDto, IMoveSectionDto, IUpdateUserDto} from "../../../bandmaster-common/type/Dto";
+import type {ICreateMemberDto, ICreateGroupDto, IMoveSectionDto, IUpdateUserDto, IUpdateGroupUserDto} from "../../../bandmaster-common/type/Dto";
 import { dateToString, getFromApi, postToApi, patchApi } from "@/utils";
 
 const getApiUrl = (endpoint: string = '') => `/groups${endpoint}`;
@@ -42,7 +42,7 @@ export default {
         return await postToApi(getApiUrl(`/${groupId}/members/${userId}/section`), sectionData);
     },
 
-    async getUserInGroupById(groupId: string, userId: string): Promise<IUser>{
+    async getUserInGroupById(groupId: string, userId: string): Promise<IGroupUser>{
         const result = await getFromApi(getApiUrl(`/${groupId}/members/${userId}`));    
         if(result){
             result.dob = new Date(result.dob);
@@ -50,7 +50,7 @@ export default {
         return result;
     },
 
-    async updateUserInGroup(userId: string, groupId: string, params: IUpdateUserDto){
+    async updateUserInGroup(userId: string, groupId: string, params: IUpdateGroupUserDto){
         const result = await patchApi(getApiUrl(`/${groupId}/members/${userId}`), params);
         return result;
     },
