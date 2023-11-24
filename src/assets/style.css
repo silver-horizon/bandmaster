@@ -1,3 +1,7 @@
+body{
+    background-color: #FDFDFD;
+}
+
 body.nav-open {
     overflow: hidden;
 }
