@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import type { IUser, IPreferences, IEmergencyContact } from '../../../../bandmaster-common/type/Users';
-import type { IGroupUser, IGroupSummary } from '../../../../bandmaster-common/type/Groups';
+import type { IGroupUser, IGroupSummary, IGroup } from '../../../../bandmaster-common/type/Groups';
 import type { IUpdateUserDto, IUpdateGroupUserDto } from "../../../../bandmaster-common/type/Dto";
 import type { ILooseObject } from '../../../../bandmaster-common/type/Util';
 
@@ -64,6 +64,7 @@ import GroupService from '@/service/GroupService';
 import UserService from '@/service/UserService';
 import { useSessionStore } from '@/stores/SessionStore';
 import { getAge } from "@/utils"
+import { useRouter } from 'vue-router';
 
 import MemberDetails from "../../components/ViewMember/MemberDetails.vue";
 import EmergencyContact from "../../components/ViewMember/EmergencyContact.vue";
@@ -77,6 +78,7 @@ import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Message from 'primevue/message';
+import { watch } from 'vue';
 
 const props = defineProps<{
     id: string,
@@ -96,6 +98,7 @@ provide("callback", async (params: ILooseObject) => {
 });
 
 const store = useSessionStore();
+const router = useRouter();
 
 const user: Ref<IUser | IGroupUser | null> = ref(null);
 const preferences: Ref<IPreferences | null> = ref(null);
@@ -103,7 +106,7 @@ const isUser = ref(false);
 const age = ref(100);
 const canEdit = ref(false);
 const groupUser = (props.groupId != null);
-const group = store.groups.find(x => x.id == props.groupId);
+const group: Ref<IGroup | undefined> = ref(store.groups.find(x => x.id == props.groupId));
 const userGroups: Ref<IGroupSummary[]> = ref([]);
 
 const showEditPreferences = ref(false);
@@ -111,6 +114,15 @@ const showEditPreferences = ref(false);
 const toLoad = [];
 if (groupUser) {
     toLoad.push(GroupService.getUserInGroupById(props.groupId, props.id), []);
+
+    let prevGroup = store.currentGroup?.id;
+    store.$subscribe(async () => {
+        if (store.currentGroup?.id != prevGroup && store.currentGroup?.id != null) {
+            user.value = await GroupService.getUserInGroupById(store.currentGroup.id, props.id);
+            group.value = store.currentGroup;
+            prevGroup = store.currentGroup.id;
+        }
+    });
 } else {
     toLoad.push(UserService.getById(props.id), UserService.getGroups(props.id));
 }
