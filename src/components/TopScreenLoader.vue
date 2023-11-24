@@ -18,6 +18,7 @@
     width: v-bind(progress);
     background-color: var(--primary-700);
     z-index: 5001;
+    transition: width .1s;
 }
 </style>
 
