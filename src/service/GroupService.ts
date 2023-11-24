@@ -1,13 +1,15 @@
 import type { IGroup, IGroupUser } from "../../../bandmaster-common/type/Groups";
 import type { IUser } from "../../../bandmaster-common/type/Users";
-import type {ICreateMemberDto, ICreateGroupDto, IMoveSectionDto, IUpdateUserDto, IUpdateGroupUserDto} from "../../../bandmaster-common/type/Dto";
+import type {ICreateMemberDto, ICreateGroupDto, IMoveSectionDto, IUpdateGroupUserDto} from "../../../bandmaster-common/type/Dto";
+import type {ProgressCallback} from '@/type/callback';
+
 import { dateToString, getFromApi, postToApi, patchApi } from "@/utils";
 
 const getApiUrl = (endpoint: string = '') => `/groups${endpoint}`;
 
 export default {
-    async getGroups(): Promise<IGroup[]> {
-        return await getFromApi(getApiUrl());
+    async getGroups(callback?: ProgressCallback): Promise<IGroup[]> {
+        return await getFromApi(getApiUrl(), callback);
     },
 
     async getGroup(id: string): Promise<IGroup> {
