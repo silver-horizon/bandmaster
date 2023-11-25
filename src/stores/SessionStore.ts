@@ -16,5 +16,9 @@ export const useSessionStore = defineStore('session', () => {
     progress: ref(0)
   };
 
-  return {groups, currentGroup, currentUser, backgroundLoader};
+  const foregroundLoader = {
+    visible: ref(false)
+  };
+
+  return {groups, currentGroup, currentUser, backgroundLoader, foregroundLoader};
 });

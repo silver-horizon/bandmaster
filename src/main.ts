@@ -25,7 +25,6 @@ async function initialise(){
 
     HeartbeatService.start();
 
-    document.getElementById("loading")?.remove();
     app.mount('#app');
 }
 

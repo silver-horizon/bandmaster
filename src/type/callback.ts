@@ -1,1 +1,0 @@
-export type ProgressCallback = (prog: number, total: number) => void;

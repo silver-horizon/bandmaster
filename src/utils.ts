@@ -1,5 +1,4 @@
-import type { ProgressCallback } from "@/type/callback";
-import { useSessionStore } from "./stores/SessionStore";
+import { backgroundLoaderCallback, setBackgroundLoader, type ProgressCallback, registerBackgroundRequest } from "@/loader";
 
 export const debounce = (fn: (...args: any[]) => void, wait: number) => {
     let timer: number | undefined;
@@ -36,7 +35,7 @@ export async function fetchWithCallback(url: string, progressCallback: ProgressC
     const maxLength = parseInt(response.headers.get('Content-Length') ?? '0');
     
     const initialProgress = 100;
-    progressCallback(initialProgress, maxLength + initialProgress);
+    progressCallback(url, initialProgress, maxLength + initialProgress);
 
     while (true) {
         const { done, value } = await reader.read();
@@ -48,7 +47,7 @@ export async function fetchWithCallback(url: string, progressCallback: ProgressC
         chunks.push(value);
         received += value.length;
 
-        progressCallback(received + initialProgress, maxLength + initialProgress);
+        progressCallback(url, received + initialProgress, maxLength + initialProgress);
     }
 
     const allChunks = new Uint8Array(received);
@@ -62,8 +61,15 @@ export async function fetchWithCallback(url: string, progressCallback: ProgressC
     return JSON.parse(new TextDecoder("utf-8").decode(allChunks));
 }
 
-export async function getFromApi(url: string, progressCallback: ProgressCallback = defaultProgressCallback) {
-    const result = await fetchWithCallback(getApiPath(url), progressCallback);
+export async function getFromApi(url: string, background: boolean = true) {
+    url = getApiPath(url);
+
+    if(background){
+        registerBackgroundRequest(url);
+        setBackgroundLoader(true);
+    }
+
+    const result = await fetchWithCallback(url, backgroundLoaderCallback);
 
     if (!result.success) {
         throw new Error(result.errors.join(", "));
@@ -105,8 +111,9 @@ export async function patchApi(url: string, payload: any) {
 };
 
 export const getApiPath = (endpoint: string) => {
+
     if (import.meta.env.DEV) {
-        return `${location.protocol}\\\\${location.hostname}:${import.meta.env.VITE_API_PORT}${endpoint}`;
+        return `${location.protocol}//${location.hostname}:${import.meta.env.VITE_API_PORT}${endpoint}`;
     }
 
     return import.meta.env.VITE_API_URL + endpoint;
@@ -120,12 +127,4 @@ export const setTitle = (title: string | null) => {
     }
 
     document.title = `${title} | ${defaultTitle}`;
-}
-
-function defaultProgressCallback(progress: number, total: number) {
-    const store = useSessionStore();
-    const prog = progress / total;
-
-    store.backgroundLoader.visible = prog < 1;
-    store.backgroundLoader.progress = prog;
 }

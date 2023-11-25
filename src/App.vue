@@ -148,7 +148,7 @@ ul {
 </style>
 
 <template>
-  <TopScreenLoader :visible="store.backgroundLoader.visible" :progress="store.backgroundLoader.progress"></TopScreenLoader>
+  <Loader></Loader>
 
   <header :class="{ open: isNavOpen }">
     <div class="container navbar">
@@ -205,7 +205,7 @@ import { ref, computed, watch } from 'vue';
 import { useSessionStore } from './stores/SessionStore';
 
 import Dropdown from 'primevue/dropdown';
-import TopScreenLoader from '@/components/TopScreenLoader.vue';
+import Loader from '@/components/Loader.vue';
 
 const router = useRouter();
 const route = useRoute();

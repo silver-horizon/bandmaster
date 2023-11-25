@@ -23,16 +23,21 @@
 </style>
 
 <template>
-    <div v-if="visible" class="top-screen-loader"></div>
+    <div v-if="store.backgroundLoader.visible" class="top-screen-loader"></div>
+
+    <Dialog class="text-center" :visible="store.foregroundLoader.visible" :closable="false" modal>
+        <div class="lds-dual-ring"></div>
+        <h3>Loading...</h3>
+    </Dialog>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useSessionStore } from '@/stores/SessionStore';
 
-const props = defineProps<{
-    visible: boolean,
-    progress: number
-}>();
+import Dialog from 'primevue/dialog';
 
-const progress = computed(() => `${props.progress * 100}%`);
+const store = useSessionStore();
+
+const progress = computed(() => `${store.backgroundLoader.progress * 100}%`);
 </script>
