@@ -5,7 +5,7 @@
                 <slot></slot>
 
                 <div class="text-center mt-3" v-if="!disabled">
-                    <Button type="submit">{{buttonText}}</Button>
+                    <Button type="submit" icon="pi pi-check" :label="buttonText" :loading="loading"></Button>
                 </div>
             </template>
         </Card>
@@ -19,7 +19,8 @@ import Button from 'primevue/button';
 const {buttonTitle, disabled, unstyled} = defineProps<{
     buttonTitle?: string,
     disabled?: boolean,
-    unstyled?: boolean
+    unstyled?: boolean,
+    loading?: boolean
 }>();
 const buttonText = buttonTitle ?? "Submit";
 
