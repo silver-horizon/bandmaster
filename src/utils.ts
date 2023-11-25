@@ -1,4 +1,4 @@
-import { backgroundLoaderCallback, setBackgroundLoader, type ProgressCallback, registerBackgroundRequest } from "@/loader";
+import { backgroundLoaderCallback, type ProgressCallback, registerBackgroundRequest } from "@/loader";
 
 export const debounce = (fn: (...args: any[]) => void, wait: number) => {
     let timer: number | undefined;
@@ -61,13 +61,9 @@ export async function fetchWithCallback(url: string, progressCallback: ProgressC
     return JSON.parse(new TextDecoder("utf-8").decode(allChunks));
 }
 
-export async function getFromApi(url: string, background: boolean = true) {
+export async function getFromApi(url: string) {
     url = getApiPath(url);
-
-    if(background){
-        registerBackgroundRequest(url);
-        setBackgroundLoader(true);
-    }
+    registerBackgroundRequest(url);
 
     const result = await fetchWithCallback(url, backgroundLoaderCallback);
 

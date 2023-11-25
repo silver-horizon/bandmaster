@@ -24,6 +24,7 @@ function getTotalOutstandingProgress(){
 
 export function registerBackgroundRequest(url: string){
     activeLoaders[url] = 0;
+    backgroundLoaderCallback(url, 0, 1);
 }
 
 export function backgroundLoaderCallback(url: string, progress: number, total: number) {
@@ -42,9 +43,4 @@ export function backgroundLoaderCallback(url: string, progress: number, total: n
 export function setForegroundLoader(show: boolean){
     const store = useSessionStore();
     store.foregroundLoader.visible = show;
-}
-
-export function setBackgroundLoader(show: boolean){
-    const store = useSessionStore();
-    store.backgroundLoader.visible = show;
 }
