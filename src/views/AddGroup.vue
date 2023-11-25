@@ -1,7 +1,7 @@
 <template>
     <h2>Add a New Group</h2>
 
-    <Form button-title="Create" @submit="create">
+    <Form button-title="Create" @submit="create" :loading="saving">
         <span class="p-float-label">
             <InputText id="group-name" class="w-full" v-model="name" required></InputText>
             <label for="group-name">Group Name</label>
@@ -31,15 +31,19 @@ const store = useSessionStore();
 
 const name = ref("");
 const rawSections = ref("");
+const saving = ref(false);
 
 async function create() {
+    saving.value = true;
     const group = await GroupService.createGroup({
         name: name.value, 
         sections: rawSections.value
     });
 
-    store.currentGroup = group;
     store.groups.push(group);
+    store.currentGroup = group;
+
+    saving.value = false;
 
     await Swal.fire({
         title: 'Group Added Successfully',
