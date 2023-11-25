@@ -9,7 +9,7 @@
         <div class="mb-3">
             <Button icon="pi pi-cog" outlined v-if="isUser" @click="showEditPreferences = true"></Button>
             <Dialog v-model:visible="showEditPreferences" modal header="Edit Settings">
-                <Form :unstyled="true" @submit="savePreferences" v-if="preferences">
+                <Form :unstyled="true" @submit="savePreferences" v-if="preferences" :loading="savingPreferences">
                     <EditSettings v-model="preferences"></EditSettings>
                 </Form>
             </Dialog>
@@ -27,7 +27,7 @@
             <div class="mb-3">
                 <Card class="h-full" :class="{ 'center': !user.contact }">
                     <template #content>
-                        <EmergencyContact v-model="user.contact" :can-edit="canEdit" @createContact="addContact"></EmergencyContact>
+                        <EmergencyContact v-model="user.contact" :can-edit="canEdit" @createContact="addContact" :loading="savingContact"></EmergencyContact>
                     </template>
                 </Card>
             </div>
@@ -63,7 +63,8 @@ import { ref, provide } from 'vue';
 import GroupService from '@/service/GroupService';
 import UserService from '@/service/UserService';
 import { useSessionStore } from '@/stores/SessionStore';
-import { getAge, setTitle } from "@/utils";
+import { setTitle } from "@/utils";
+import { setForegroundLoader } from '@/loader';
 
 import MemberDetails from "../../components/ViewMember/MemberDetails.vue";
 import EmergencyContact from "../../components/ViewMember/EmergencyContact.vue";
@@ -77,6 +78,8 @@ import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Message from 'primevue/message';
+
+setForegroundLoader(true);
 
 const props = defineProps<{
     id: string,
@@ -100,11 +103,12 @@ const store = useSessionStore();
 const user: Ref<IUser | IGroupUser | null> = ref(null);
 const preferences: Ref<IPreferences | null> = ref(null);
 const isUser = ref(false);
-const age = ref(100);
 const canEdit = ref(false);
 const groupUser = (props.groupId != null);
 const group: Ref<IGroup | undefined> = ref(store.groups.find(x => x.id == props.groupId));
 const userGroups: Ref<IGroupSummary[]> = ref([]);
+const savingPreferences = ref(false);
+const savingContact = ref(false);
 
 const showEditPreferences = ref(false);
 
@@ -134,22 +138,26 @@ Promise.all(toLoad).then(([m, groups, pref]) => {
     }
     preferences.value = pref as IPreferences;
 
-    age.value = getAge(user.value.dob);
     isUser.value = user.value.id === store.currentUser.id;
     canEdit.value = isUser.value || preferences.value.allowEdit;
 
     userGroups.value = groups as IGroupSummary[];
 
     setTitle(`${user.value.firstName} ${user.value.lastName}'s Profile`);
+    setForegroundLoader(false);
 });
 
 async function savePreferences() {
+    savingPreferences.value = true;
     await UserService.setPreferences(user.value!.id, preferences.value!);
     showEditPreferences.value = false;
+    savingPreferences.value = false;
 }
 
 async function addContact(newContact: IEmergencyContact) {
+    savingContact.value = true;
     const result = await UserService.setContact(props.id, { ...newContact });
     user.value!.contact = result.contact;
+    savingContact.value = false;
 }
 </script>

@@ -20,7 +20,7 @@
         <Button v-if="canEdit" @click="showCreateContact = true">+ Add</Button>
 
         <Dialog v-model:visible="showCreateContact" modal header="Add Emergency Contact">
-            <Form :unstyled="true" @submit="addContact">
+            <Form :unstyled="true" @submit="addContact" :loading="loading">
                 <CreateEmergencyContact v-model="newContact"></CreateEmergencyContact>
             </Form>
         </Dialog>
@@ -31,7 +31,7 @@
 import type { Ref } from "vue";
 import type { IEmergencyContact } from "../../../../bandmaster-common/type/Users";
 
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 
 import CreateEmergencyContact from '@/components/popup/CreateEmergencyContact.vue';
 
@@ -42,7 +42,8 @@ import Form from "@/components/Form.vue";
 
 const props = defineProps<{
     modelValue?: IEmergencyContact | null,
-    canEdit?: boolean
+    canEdit?: boolean,
+    loading?: boolean
 }>();
 
 const emit = defineEmits(['update:modelValue', 'createContact']);
@@ -66,6 +67,11 @@ const newContact: Ref<IEmergencyContact> = ref({
 
 async function addContact() {
     emit("createContact", newContact.value);
-    showCreateContact.value = false;
 }
+
+watch(props, () => {
+    if(!props.loading){
+        showCreateContact.value = false;
+    }
+});
 </script>
