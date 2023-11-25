@@ -2,7 +2,7 @@
     <h2>Add Member</h2>
     <Message severity="info" v-if="store.groups.length > 1">You are adding this member to <strong>{{ store.currentGroup?.name }}</strong></Message>
 
-    <Form @submit="createMember" button-title="Create" :disabled="!canSubmit">
+    <Form @submit="createMember" button-title="Create" :disabled="!canSubmit" :loading="savingForm">
         <div class="p-float-label mb-3" :class="{ 'p-input-icon-right': loading }">
             <i class="pi pi-spin pi-spinner" v-if="loading"></i>
             <InputText type="email" class="w-full" id="email" required v-model="user.email" @keydown="checkEmail"></InputText>
@@ -11,7 +11,7 @@
 
         <div v-if="matchedUsers.length > 0">
             <Message severity="info">We found <strong>{{ matchedUsers.length }}</strong> users matching that email address! Please select the correct user from those below</Message>
-            <Message severity="error">This user has disabled adding new users to their email address. If no matching user can be found then please ask them to add their details</Message>
+            <Message severity="error" v-if="!canCreate">This user has disabled adding new users to their email address. If no matching user can be found then please ask them to add their details</Message>
             <div class="scroll-x">
                 <Card v-for="user in matchedUsers" class="hover center">
                     <template #content>
@@ -133,6 +133,7 @@ const newMember: Ref<boolean | null> = ref(null);
 const loading = ref(false);
 const alreadyExists = ref(false);
 const canCreate = ref(false);
+const savingForm = ref(false);
 
 function selectUser(selectedUser: IUser) {
     const match = store.currentGroup?.sections.some(x => x.members.some(m => m.id === selectedUser.id));
@@ -179,7 +180,6 @@ const checkEmail = debounce((e: Event) => {
     alreadyExists.value = false;
 
     UserService.findByEmail(user.value.email).then(res => {
-        console.log(res);
         matchedUsers.value = res.users;
         canCreate.value = res.preferences.allowCreate;
     }).catch((e) => {
@@ -204,6 +204,8 @@ async function createMember() {
         return;
     }
 
+    savingForm.value = true;
+
     showError.value.section = false;
     showError.value.dob = false;
 
@@ -227,8 +229,11 @@ async function createMember() {
             text: ex.message,
             icon: "error"
         });
+        savingForm.value = false;
         return;
     }
+
+    savingForm.value = false;
 
     await Swal.fire({
         title: "Created Member",

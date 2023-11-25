@@ -1,6 +1,4 @@
 <template>
-    <h2 v-if="!user">Loading...</h2>
-
     <div v-if="user">
         <h2>{{ user.firstName }} {{ user.lastName }}</h2>
 
