@@ -25,7 +25,7 @@
     </div>
 
     <Dialog v-if="selectedSection" v-model:visible="showEditSection" modal :header='`Edit Section "${selectedSection?.name}"`'>
-        <ImmediateUpdate :model-value="selectedSection.name" field-name="name" :props="{class:'my-3'}"></ImmediateUpdate>
+        <ImmediateUpdate v-model="selectedSection.name" field-name="name" :props="{class:'my-3'}"></ImmediateUpdate>
 
         <Button severity="danger" @click="deleteSection" :disabled="notSelectedSections?.length == 0">Delete Section</Button>
         <small class="block" v-if="notSelectedSections?.length == 0">This is your only section so you may not delete it!</small>
@@ -42,12 +42,14 @@
 </template>
 
 <script setup lang="ts">
+import type { ILooseObject } from '../../../bandmaster-common/type/Util';
 import type { ISection } from '../../../bandmaster-common/type/Groups';
+import type {IUpdateSectionDto} from '../../../bandmaster-common/type/Dto';
 import type { Ref } from 'vue';
 
 import GroupService from '@/service/GroupService';
 import { useSessionStore } from '@/stores/SessionStore';
-import { ref, computed } from 'vue';
+import { ref, computed, provide } from 'vue';
 
 import { RouterLink } from 'vue-router';
 import Panel from 'primevue/panel';
@@ -61,6 +63,14 @@ import ImmediateUpdate from '@/components/ImmediateUpdate.vue';
 import draggable from 'vuedraggable';
 import { setTitle } from '@/utils';
 import Swal from 'sweetalert2';
+
+provide("callback", async (params: ILooseObject) => {
+    if(!selectedSection.value){
+        throw new Error("Section must be selected in order for updates to take place");
+    }
+
+    return await GroupService.updateSection(store.currentGroup!.id, selectedSection.value.id, params as IUpdateSectionDto);
+});
 
 type AddedEvent = { added: { newIndex: number, element: any } };
 
