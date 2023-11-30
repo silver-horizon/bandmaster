@@ -106,6 +106,22 @@ export async function patchApi(url: string, payload: any) {
     return result.data;
 };
 
+export async function deleteApi(url: string, payload: any) {
+    const result = await fetch(getApiPath(url), {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': "application/json"
+        },
+        body: JSON.stringify(payload)
+    }).then(res => res.json());
+
+    if (!result.success) {
+        throw new Error(result.errors.join(", "));
+    }
+
+    return result.data;
+};
+
 export const getApiPath = (endpoint: string) => {
 
     if (import.meta.env.DEV) {

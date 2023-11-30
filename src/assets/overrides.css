@@ -40,3 +40,7 @@
     width: 1000px;
     max-width: 90vw;
 }
+
+div:where(.swal2-container){
+    z-index: 9999!important;
+}

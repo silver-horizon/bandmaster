@@ -25,20 +25,18 @@
     </div>
 
     <Dialog v-if="selectedSection" v-model:visible="showEditSection" modal :header='`Edit Section "${selectedSection?.name}"`'>
-        <div class="p-float-label mb-3">
-            <InputText class="w-full" id="name" required v-model="selectedSection.name"></InputText>
-            <label for="name">Name</label>
-        </div>
+        <ImmediateUpdate :model-value="selectedSection.name" field-name="name" :props="{class:'my-3'}"></ImmediateUpdate>
 
-        <Button severity="danger">Delete Section</Button>
+        <Button severity="danger" @click="deleteSection" :disabled="notSelectedSections?.length == 0">Delete Section</Button>
+        <small class="block" v-if="notSelectedSections?.length == 0">This is your only section so you may not delete it!</small>
 
-        <div class="border-1 border-round surface-border mt-3 p-3">
+        <div class="border-1 border-round surface-border mt-3 p-3" v-if="isDeleting">
             <p>Are you sure you wish to delete this section? This action <strong>cannot be undone</strong>.</p>
             <div class="my-3">
                 <label>Please select the section to move all of the existing members to:</label>
-                <Dropdown class="w-full"></Dropdown>
+                <Dropdown class="w-full" :options="notSelectedSections" option-label="name" option-value="id" v-model="sectionTransfer" ></Dropdown>
             </div>
-            <Button severity="danger">Confirm Deletion</Button>
+            <Button severity="danger" @click="selectReplacementSection">Confirm Deletion</Button>
         </div>
     </Dialog>
 </template>
@@ -49,19 +47,20 @@ import type { Ref } from 'vue';
 
 import GroupService from '@/service/GroupService';
 import { useSessionStore } from '@/stores/SessionStore';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 import { RouterLink } from 'vue-router';
 import Panel from 'primevue/panel';
 import Card from 'primevue/card';
 import Badge from 'primevue/badge';
 import Dialog from 'primevue/dialog';
-import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
+import ImmediateUpdate from '@/components/ImmediateUpdate.vue';
 
 import draggable from 'vuedraggable';
 import { setTitle } from '@/utils';
+import Swal from 'sweetalert2';
 
 type AddedEvent = { added: { newIndex: number, element: any } };
 
@@ -75,6 +74,8 @@ async function changeSection(e: AddedEvent, sectionId: string) {
 
 const showEditSection = ref(false);
 const selectedSection: Ref<ISection | null> = ref(null);
+const sectionTransfer = ref(null);
+const isDeleting = ref(false);
 
 const store = useSessionStore();
 let prevGroup: string | undefined = undefined;
@@ -97,6 +98,57 @@ function updateMembers() {
 
 function editSection(section: ISection) {
     selectedSection.value = section;
+    sectionTransfer.value = null;
+    isDeleting.value = false;
     showEditSection.value = true;
 }
+
+async function deleteSection(){
+    const numOptions = notSelectedSections.value!.length;
+    if(numOptions == 0){
+        await Swal.fire({
+            title: "Cannot Delete Section",
+            text: "This is your only section so you may not delete it",
+            icon: "error"
+        });
+    } else if(selectedSection.value!.members.length == 0){
+        await deleteAndMove();
+    } else if(numOptions == 1){
+        await deleteAndMove(notSelectedSections.value![0].id);
+    } else {
+        isDeleting.value = true;
+    }
+}
+
+async function deleteAndMove(newSection: string | null = null){
+    const replacement = await GroupService.removeSection(store.currentGroup!.id, selectedSection.value!.id, newSection);
+    updateMembers();
+
+    let text = `${selectedSection.value!.name} has been successfully deleted`;
+    if(replacement?.name){
+        text += `, and the existing members have been transferred to ${replacement.name}`;
+    }
+
+    await Swal.fire({
+        title: 'Section Successfully Removed',
+        icon: 'success',
+        text
+    });
+    showEditSection.value = false;
+}
+
+async function selectReplacementSection(){
+    if(!sectionTransfer.value){
+        await Swal.fire({
+            title: "Missing Replacement Section",
+            text: "You must choose a section to transfer members from the current section to, otherwise they will be orphaned and lost forever",
+            icon: 'error'
+        });
+        return;
+    }
+
+    deleteAndMove(sectionTransfer.value);
+}
+
+const notSelectedSections = computed(() => store.currentGroup?.sections.filter(s => s.id != selectedSection.value?.id));
 </script>
