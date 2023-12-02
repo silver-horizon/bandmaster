@@ -76,6 +76,7 @@ import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Message from 'primevue/message';
+import Swal from 'sweetalert2';
 
 setForegroundLoader(true);
 
@@ -117,7 +118,17 @@ if (groupUser) {
     let prevGroup = store.currentGroup?.id;
     store.$subscribe(async () => {
         if (store.currentGroup?.id != prevGroup && store.currentGroup?.id != null) {
-            user.value = await GroupService.getUserInGroupById(store.currentGroup.id, props.id);
+            try{
+                user.value = await GroupService.getUserInGroupById(store.currentGroup.id, props.id)
+            } catch {
+                await Swal.fire({
+                    title: "Not a Member",
+                    text: `${user.value?.firstName} ${user.value?.lastName} is not a member of ${store.currentGroup.name}!`,
+                    icon: "error"
+                });
+                store.currentGroup = group.value!;
+                return;
+            }
             group.value = store.currentGroup;
             prevGroup = store.currentGroup.id;
         }
