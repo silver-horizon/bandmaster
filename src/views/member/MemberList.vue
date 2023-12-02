@@ -1,6 +1,12 @@
 <template>
     <h2>Members</h2>
 
+    <div class="mb-3">
+        <RouterLink :to="{ name: 'createMember' }">
+            <Button outlined>+ Add</Button>
+        </RouterLink>
+    </div>
+
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
         <div v-for="member in members" class="hover mb-3">
             <Card class="h-full text-center">
@@ -8,17 +14,7 @@
                     <p>{{ member.firstName }} {{ member.lastName }}</p>
                     <p class="font-italic"><small>{{ member.sectionName }}</small></p>
                     <Button>
-                        <RouterLink :to="{name: 'viewMember', params: {id: member.id}}" class="stretched-link">View</RouterLink>
-                    </Button>
-                </template>
-            </Card>
-        </div>
-
-        <div class="hover mb-3">
-            <Card class="h-full center">
-                <template #content>
-                    <Button size="large">
-                        <RouterLink class="stretched-link" :to="{ name: 'createMember'}">+ Add</RouterLink>
+                        <RouterLink :to="{ name: 'viewMember', params: { id: member.id } }" class="stretched-link">View</RouterLink>
                     </Button>
                 </template>
             </Card>
@@ -46,11 +42,11 @@ const store = useSessionStore();
 let prevGroup: string | undefined = undefined;
 store.$subscribe(() => {
     setTitle(`${store.currentGroup!.name}'s Members`);
-    if(store.currentGroup?.id != prevGroup){
+    if (store.currentGroup?.id != prevGroup) {
         updateMembers();
         prevGroup = store.currentGroup?.id;
     }
-}, {immediate: true});
+}, { immediate: true });
 
 function updateMembers() {
     if (!store.currentGroup) {
