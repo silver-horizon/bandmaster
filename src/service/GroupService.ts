@@ -1,6 +1,6 @@
 import type { IGroup, IGroupUser, ISection } from "../../../bandmaster-common/type/Groups";
 import type { IUser } from "../../../bandmaster-common/type/Users";
-import type {ICreateMemberDto, ICreateGroupDto, IMoveSectionDto, IUpdateGroupUserDto, IUpdateSectionDto} from "../../../bandmaster-common/type/Dto";
+import type {ICreateMemberDto, ICreateGroupDto, IMoveSectionDto, IUpdateGroupUserDto, IUpdateSectionDto, ICreateSectionDto} from "../../../bandmaster-common/type/Dto";
 
 import { dateToString, getFromApi, postToApi, patchApi, deleteApi } from "@/utils";
 
@@ -64,5 +64,9 @@ export default {
 
     async updateSection(groupId: string, sectionId: string, payload: IUpdateSectionDto){
         return await patchApi(getApiUrl(`/${groupId}/sections/${sectionId}`), payload);
+    },
+
+    async createSection(groupId: string, payload: ICreateSectionDto){
+        return await postToApi(getApiUrl(`/${groupId}/sections/new`), payload);
     }
 };
