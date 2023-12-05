@@ -70,7 +70,13 @@ function getElement(): ICheckable | null{
     return null;
 }
 
+let timeout: number | null = null;
 const save = debounce(() => {
+    if(timeout){
+        clearTimeout(timeout);
+        timeout = null;
+    }
+
     if(originalValue == inputValue.value){
         return;
     }
@@ -91,7 +97,10 @@ const save = debounce(() => {
 
     callback(payload).then(() => {
         updated.value = true;
-        setTimeout(() => updated.value = false, props.timeout ?? 5000);
+        timeout = setTimeout(() => {
+            updated.value = false;
+            timeout = null;
+        }, props.timeout ?? 5000);
     }).catch(ex => {
         error.value = ex.message;
     }).finally(() => {
