@@ -10,6 +10,8 @@
         </div>
     </div>
 
+    <ImmediateUpdate label="Phone Number" field-name="phone" v-model="user.phone" :props="{ disabled: !canEdit }"></ImmediateUpdate>
+    
     <div class="p-float-label mb-3">
         <InputText type="email" class="w-full" id="email" v-model="user.email" :disabled="true"></InputText>
         <label for="email">Email</label>

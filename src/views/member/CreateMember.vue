@@ -50,6 +50,11 @@
                 </div>
 
                 <div class="p-float-label">
+                    <InputText class="w-full" id="phone" v-model="user.phone" :disabled="!newMember"></InputText>
+                    <label for="phone">Phone Number (optional)</label>
+                </div>
+
+                <div class="p-float-label">
                     <Calendar class="w-full" id="dob" required v-model="user.dob" :disabled="!newMember" :class="{ 'p-invalid': showError.dob }" :max-date="new Date()"></Calendar>
                     <label for="dob">Date of Birth</label>
                 </div>
@@ -103,6 +108,7 @@ interface IUserDetails {
     fname: string,
     lname: string,
     email: string,
+    phone: string
     dob: Date | null,
     contact: IEmergencyContact | null
 }
@@ -112,6 +118,7 @@ const user: Ref<IUserDetails> = ref({
     fname: "",
     lname: "",
     email: "",
+    phone: "",
     dob: null,
     contact: {
         firstName: "",
@@ -152,6 +159,7 @@ function selectUser(selectedUser: IUser) {
         email: selectedUser.email,
         fname: selectedUser.firstName,
         lname: selectedUser.lastName,
+        phone: selectedUser.phone,
         dob: new Date(selectedUser.dob),
         contact: null
     }
@@ -213,7 +221,7 @@ async function createMember() {
         user.value.contact = null;
     }
 
-    const { fname: firstName, lname: lastName, email, dob, contact, id } = user.value;
+    const { fname: firstName, lname: lastName, email, dob, contact, id, phone } = user.value;
     let res;
     try {
         res = await GroupService.addMemberToGroup(store.currentGroup.id, section.value.id, {
@@ -221,7 +229,8 @@ async function createMember() {
             lastName,
             email,
             dob,
-            contact
+            contact,
+            phone
         }, id); 
     } catch (ex: any) {
         await Swal.fire({

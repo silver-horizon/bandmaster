@@ -21,7 +21,7 @@ export default {
 
     async addMemberToGroup(groupId: string, sectionId: string, memberData: ICreateMemberDto, id: string | null = null): Promise<IUser> {
 
-        const payload: {firstName: string, lastName: string, email: string, dob: string, contact?: any, sectionId: string} = {
+        const payload: {firstName: string, lastName: string, email: string, dob: string, contact?: any, sectionId: string, phone?: string} = {
             ...memberData,
             dob: dateToString(memberData.dob),
             sectionId
