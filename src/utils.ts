@@ -1,4 +1,5 @@
 import { backgroundLoaderCallback, type ProgressCallback, registerBackgroundRequest } from "@/loader";
+import type { ILooseObject } from "../../bandmaster-common/type/Util";
 
 export const debounce = (fn: (...args: any[]) => void, wait: number) => {
     let timer: number | undefined;
@@ -24,6 +25,14 @@ export function getAge(dob: Date) {
     const timeDiff = today.getTime() - dob.getTime();
     const days = timeDiff / (1000 * 60 * 60 * 24);
     return Math.floor(days / 365.25);
+}
+
+export function nullifyPayload(payload: ILooseObject){
+    for(const key of Object.keys(payload)){
+        if(typeof payload[key] == "string" && payload[key].trim().length == 0){
+            payload[key] = null;
+        }
+    }
 }
 
 export async function fetchWithCallback(url: string, progressCallback: ProgressCallback, options?: any) {
@@ -91,6 +100,8 @@ export async function postToApi(url: string, payload: any) {
 };
 
 export async function patchApi(url: string, payload: any) {
+    nullifyPayload(payload);
+
     const result = await fetch(getApiPath(url), {
         method: 'PATCH',
         headers: {

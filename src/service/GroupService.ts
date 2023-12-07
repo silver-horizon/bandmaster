@@ -27,6 +27,10 @@ export default {
             sectionId
         };
 
+        if(payload.phone?.trim().length == 0){
+            payload.phone = null;
+        }
+
         if (memberData.contact) {
             payload.contact = memberData.contact;
         }
